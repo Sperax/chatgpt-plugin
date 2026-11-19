@@ -1,0 +1,465 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Sperax Trading Desk — ChatGPT</title>
+<style>
+@font-face{font-family:'Inter';font-weight:400 800;src:url(fonts/Inter.woff2) format('woff2')}
+@font-face{font-family:'JB';font-weight:500;src:url(fonts/JetBrainsMono.woff2) format('woff2')}
+:root{--ink:#0d0d0d;--muted:#6e6e80;--line:#e7e7ee;--indigo:#4F46E5;--indigo2:#6366F1;--soft:#EEF2FF;--green:#059669;--greenbg:#ECFDF5;--red:#DC2626;--redbg:#FEF2F2;--amber:#B45309;--amberbg:#FFFBEB}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#fff;font-family:Inter,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-feature-settings:'cv11','ss01'}
+.v,.tc .n,.tp b{font-variant-numeric:tabular-nums}
+#bg{position:absolute;inset:0;background:radial-gradient(1200px 700px at 50% 115%,rgba(99,102,241,.16),transparent 70%),radial-gradient(900px 500px at 85% -10%,rgba(79,70,229,.08),transparent 70%)}
+.layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;will-change:transform,opacity}
+.logo{display:inline-block;flex:none}
+.logo svg{width:100%;height:100%;display:block}
+
+/* input bar */
+.bar{width:1240px;height:132px;border-radius:66px;background:#fff;border:1.5px solid #e3e3e8;box-shadow:0 10px 40px rgba(15,15,40,.07),0 1px 2px rgba(0,0,0,.04);display:flex;align-items:center;padding:0 26px 0 34px;gap:26px}
+.bar .plus{width:44px;height:44px;flex:none}
+.bar .txt{flex:1;font-size:44px;font-weight:450;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;display:flex;align-items:center}
+.bar .ph{color:#9a9aa6}
+.caret{display:inline-block;width:4px;height:54px;background:var(--indigo);border-radius:2px;margin-left:3px}
+.bar .mic{width:46px;height:46px;flex:none}
+.bar .send{width:84px;height:84px;border-radius:50%;background:#0d0d0d;flex:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.bar .send i{display:block;width:6px;border-radius:3px;background:#fff}
+
+/* headline */
+.head{font-size:132px;font-weight:700;letter-spacing:-.045em;line-height:1.02;text-align:center}
+.head span{display:inline-block;white-space:pre}
+.grad{background:linear-gradient(90deg,#4F46E5,#7C3AED 60%,#4F46E5);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* chat */
+.col{width:1240px;display:flex;flex-direction:column;gap:26px}
+.ubub{align-self:flex-end;background:#f2f2f5;border-radius:34px;padding:24px 36px;font-size:38px;font-weight:450;letter-spacing:-.01em;max-width:1000px;line-height:1.3}
+.think{font-size:40px;font-weight:500;background:linear-gradient(90deg,#9a9aa6 0%,#9a9aa6 35%,#0d0d0d 50%,#9a9aa6 65%,#9a9aa6 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.reply{font-size:84px;font-weight:700;letter-spacing:-.04em;line-height:1.08;min-height:92px}
+.reply b{font-weight:700}
+.tool{display:flex;align-items:center;gap:18px;font-size:30px;color:var(--muted)}
+.tool .logo{width:52px;height:52px}
+.tool b{color:var(--ink);font-weight:650}
+.tool .fn{font-family:JB,monospace;font-size:26px;color:#4b4b5c;background:#f4f4f7;border:1px solid var(--line);border-radius:10px;padding:6px 14px}
+.tool .st{width:34px;height:34px;flex:none;position:relative}
+.spin{position:absolute;inset:0;border-radius:50%;border:4px solid #e3e3ee;border-top-color:var(--indigo)}
+.ok{position:absolute;inset:0;border-radius:50%;background:var(--indigo);display:flex;align-items:center;justify-content:center}
+.pillrow{display:flex;gap:16px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:999px;padding:12px 24px;font-size:28px;font-weight:550;background:#fff;color:#2b2b38}
+.pill .dot{width:12px;height:12px;border-radius:50%;background:var(--green)}
+
+/* cards */
+.card{background:#fff;border:1.5px solid var(--line);border-radius:36px;box-shadow:0 30px 80px rgba(30,27,75,.10),0 2px 6px rgba(0,0,0,.04);padding:44px 52px;position:relative;overflow:hidden}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+.ct{font-size:40px;font-weight:700;letter-spacing:-.025em;display:flex;align-items:center;gap:18px}
+.sym{font-size:24px;font-weight:700;color:var(--indigo);background:var(--soft);border-radius:12px;padding:8px 14px;letter-spacing:0}
+.chip{font-size:28px;font-weight:650;border-radius:999px;padding:12px 26px;display:inline-flex;align-items:center;gap:12px}
+.chip.amber{color:var(--amber);background:var(--amberbg);border:1.5px solid #FDE68A}
+.k{font-size:24px;color:var(--muted);font-weight:500;margin-bottom:10px}
+.v{font-size:54px;font-weight:700;letter-spacing:-.03em}
+.s{font-size:22px;color:var(--muted);margin-top:8px}
+.green{color:var(--green)}.redc{color:var(--red)}.ind{color:var(--indigo)}.amb{color:var(--amber)}
+.src{font-size:22px;color:#8a8a99;margin-top:28px;display:flex;align-items:center;gap:10px}
+.src .live{width:10px;height:10px;border-radius:50%;background:var(--green)}
+
+.lsbar{height:72px;border-radius:20px;overflow:hidden;display:flex;margin-top:16px;background:#f3f3f6}
+.lsbar div{display:flex;align-items:center;font-size:26px;font-weight:650;color:#fff;padding:0 24px;white-space:nowrap}
+.lsg{background:linear-gradient(90deg,#10B981,#059669)}
+.lsr{background:linear-gradient(90deg,#F87171,#DC2626);flex:1;justify-content:flex-end}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:34px}
+.stat{background:#fafafc;border:1px solid #efeff4;border-radius:24px;padding:26px 28px}
+.sig{margin-top:28px;font-size:28px;font-weight:500;color:#2b2b38;display:flex;gap:14px;align-items:center}
+.sig .bar2{width:6px;height:40px;border-radius:3px;background:var(--amber)}
+
+.solwrap{display:grid;grid-template-columns:520px 1fr;gap:44px;align-items:stretch}
+.rows{display:flex;flex-direction:column}
+.row{display:flex;justify-content:space-between;align-items:baseline;padding:20px 0;border-bottom:1px solid #f0f0f4}
+.row:last-child{border-bottom:0}
+.row .k{margin:0;font-size:28px}
+.row .v{font-size:46px}
+.tps{display:flex;gap:16px;margin-top:20px}
+.tp{flex:1;border-radius:20px;background:var(--greenbg);border:1px solid #A7F3D0;padding:16px 20px;font-size:24px;color:#065F46;font-weight:600}
+.tp b{display:block;font-size:34px;letter-spacing:-.02em}
+
+.verdict{display:flex;align-items:center;gap:26px;margin-bottom:26px}
+.tok{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#4ADE80,#16A34A);color:#fff;font-size:42px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.summary{font-size:30px;color:#2b2b38;font-weight:500;margin-bottom:30px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:16px 26px}
+.chk{display:flex;align-items:center;gap:18px;font-size:30px;font-weight:550;padding:18px 22px;border-radius:20px;background:#fafafc;border:1px solid #efeff4}
+.chk .ic{width:42px;height:42px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+.chk.good .ic{background:var(--greenbg);border:2px solid #6EE7B7}
+.chk.warn{background:var(--amberbg);border-color:#FDE68A}
+.chk.warn .ic{background:#FEF3C7;border:2px solid #FBBF24}
+
+/* readonly */
+.ro{display:flex;flex-direction:column;align-items:center;gap:40px}
+.ro .bigchk{width:180px;height:180px}
+.ro h1{font-size:120px;font-weight:700;letter-spacing:-.045em}
+.ro .subs{display:flex;gap:28px}
+.ro .subs div{font-size:44px;font-weight:550;color:#2b2b38;display:flex;align-items:center;gap:14px}
+.ro .subs i{display:block;width:14px;height:14px;border-radius:50%;background:var(--indigo)}
+
+/* tools */
+.marq{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:22px;overflow:hidden}
+.mrow{display:flex;gap:18px;white-space:nowrap;will-change:transform}
+.mrow span{font-family:JB,monospace;font-size:28px;color:#4b4b5c;background:#f6f6f9;border:1px solid var(--line);border-radius:14px;padding:14px 22px}
+.mfade{position:absolute;inset:0;background:radial-gradient(1180px 560px at 50% 52%,#fff 52%,rgba(255,255,255,.9) 68%,rgba(255,255,255,0) 100%),linear-gradient(90deg,#fff,rgba(255,255,255,0) 18%,rgba(255,255,255,0) 82%,#fff)}
+.tc{position:relative;text-align:center}
+.tc .n{font-size:300px;font-weight:800;letter-spacing:-.06em;line-height:.9}
+.tc .l{font-size:56px;font-weight:700;letter-spacing:-.03em;margin-top:10px}
+.tc .m{font-size:34px;color:var(--muted);margin-top:18px;font-weight:500}
+
+/* end */
+.end{display:flex;flex-direction:column;align-items:center}
+.end .logo{width:200px;height:200px;filter:drop-shadow(0 24px 50px rgba(79,70,229,.35))}
+.end h1{font-size:124px;font-weight:800;letter-spacing:-.05em;margin-top:52px}
+.end h2{font-size:48px;font-weight:500;color:var(--muted);letter-spacing:-.02em;margin-top:12px}
+.end .pill{margin-top:52px;font-size:34px;padding:18px 34px}
+.disc{position:absolute;left:0;right:0;bottom:44px;text-align:center;font-size:19px;color:#9a9aa6;line-height:1.5;opacity:0}
+</style></head><body>
+<div id="bg"></div>
+
+<section class="layer" id="sBar"><div class="bar" id="bar">
+  <svg class="plus" viewBox="0 0 24 24" fill="none" stroke="#0d0d0d" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  <div class="txt" id="barTxt"></div>
+  <svg class="mic" viewBox="0 0 24 24" fill="none" stroke="#0d0d0d" stroke-width="1.7" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
+  <div class="send" id="send"><i></i><i></i><i></i><i></i></div>
+</div></section>
+
+<section class="layer" id="sHead"><div class="head" id="head"></div></section>
+
+<section class="layer" id="sIntro"><div class="col">
+  <div class="ubub" id="iBub">Can ChatGPT check it first?</div>
+  <div class="think" id="iThink">Thinking</div>
+  <div class="reply" id="iReply"></div>
+  <div class="pillrow" id="iPills">
+    <div class="pill"><span class="logo" style="width:40px;height:40px"></span>Sperax Trading Desk</div>
+    <div class="pill">43 tools</div>
+    <div class="pill"><span class="dot"></span>Live market data</div>
+    <div class="pill">Read-only</div>
+  </div>
+</div></section>
+
+<section class="layer" id="sBtc"><div class="col">
+  <div class="ubub">Is Bitcoin perp positioning crowded right now?</div>
+  <div class="tool"><span class="logo"></span><b>Sperax Trading Desk</b><span class="fn">get_derivatives_positioning</span><span class="st"><span class="spin"></span><span class="ok"></span></span></div>
+  <div class="card">
+    <div class="ch"><div class="ct"><span class="sym">BTC</span>Perpetuals positioning</div><span class="chip amber">Crowded long</span></div>
+    <div class="k" style="font-size:28px;display:flex;justify-content:space-between"><span>Accounts long vs short · OKX</span><span class="v" style="font-size:40px;color:var(--ink)" id="lsVal">2.62 : 1</span></div>
+    <div class="lsbar"><div class="lsg" id="lsG">Long 72%</div><div class="lsr" id="lsR">Short 28%</div></div>
+    <div class="grid4">
+      <div class="stat"><div class="k">Funding, annualized</div><div class="v" id="bFund">4.93%</div></div>
+      <div class="stat"><div class="k">Top traders</div><div class="v" id="bTop">1.65 : 1</div></div>
+      <div class="stat"><div class="k">Open interest</div><div class="v">Flat</div></div>
+      <div class="stat"><div class="k">Squeeze risk</div><div class="v green">None</div></div>
+    </div>
+    <div class="sig" id="bSig"><span class="bar2"></span>Accounts are 2.62:1 long; the crowd is one-sided.</div>
+    <div class="src"><span class="live"></span>Live from OKX and Hyperliquid · Nov 17, 2026</div>
+  </div>
+</div></section>
+
+<section class="layer" id="sSol"><div class="col">
+  <div class="ubub">Size a SOL long at 150, stop 142, targets 165 and 180. Risk 1% of $10k.</div>
+  <div class="tool"><span class="logo"></span><b>Sperax Trading Desk</b><span class="fn">build_trade_plan</span><span class="st"><span class="spin"></span><span class="ok"></span></span></div>
+  <div class="card">
+    <div class="ch" style="margin-bottom:20px"><div class="ct"><span class="sym">SOL</span>Long trade plan</div><span class="chip" style="color:var(--green);background:var(--greenbg);border:1.5px solid #A7F3D0">No warnings</span></div>
+    <div class="solwrap">
+      <div>
+        <svg id="ladder" width="520" height="330" viewBox="0 0 520 330"></svg>
+        <div class="tps"><div class="tp" id="tp1">TP1 · 1.82R<b>+$91.10</b></div><div class="tp" id="tp2">TP2 · 3.66R<b>+$183.13</b></div></div>
+      </div>
+      <div class="rows">
+        <div class="row"><span class="k">Position size</span><span class="v" id="sUnits">12.28 SOL</span></div>
+        <div class="row"><span class="k">Notional</span><span class="v" id="sNot">$1,841</span></div>
+        <div class="row"><span class="k">Max loss at stop</span><span class="v redc" id="sRisk">$100</span></div>
+        <div class="row"><span class="k">Blended reward</span><span class="v ind" id="sR">2.74R</span></div>
+        <div class="row"><span class="k">Breakeven win rate</span><span class="v" id="sBe">26.7%</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="layer" id="sPepe"><div class="col">
+  <div class="ubub">Is PEPE safe to buy?</div>
+  <div class="tool"><span class="logo"></span><b>Sperax Trading Desk</b><span class="fn">scan_token</span><span class="st"><span class="spin"></span><span class="ok"></span></span></div>
+  <div class="card">
+    <div class="verdict"><div class="tok">P</div><div style="flex:1"><div class="ct">PEPE</div><div class="s" style="font-size:26px;margin-top:4px">Ethereum · 0x6982…1933</div></div>
+      <span class="chip amber" style="font-size:36px;padding:16px 34px" id="pVerdict"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5M12 18v.01"/></svg>Caution</span></div>
+    <div class="summary">Risk factors found. Size down and read the flags before buying.</div>
+    <div class="checks" id="pChecks"></div>
+    <div class="src"><span class="live"></span>Live from GoPlus and DEX Screener · Nov 17, 2026</div>
+  </div>
+</div></section>
+
+<section class="layer" id="sRo"><div class="ro">
+  <svg class="bigchk" viewBox="0 0 180 180"><circle cx="90" cy="90" r="84" fill="#4F46E5" id="roCirc"/><path id="roPath" d="M54 93 l25 25 l48 -54" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <h1 id="roH">Read-only by design.</h1>
+  <div class="subs" id="roSubs"><div><i></i>No exchange keys</div><div><i></i>No orders</div><div><i></i>No signing</div></div>
+</div></section>
+
+<section class="layer" id="sCheck"><div class="head" id="checkHead" style="font-size:136px"></div></section>
+
+<section class="layer" id="sTools"><div class="marq" id="marq"></div><div class="mfade"></div>
+  <div class="tc"><div class="n grad" id="tN">43</div><div class="l">tools, inside ChatGPT</div><div class="m">Positioning · Sizing · Safety scans · Live market feeds</div></div>
+</section>
+
+<section class="layer" id="sEnd"><div class="end">
+  <span class="logo" id="eLogo"></span>
+  <h1 id="eH">Sperax Trading Desk</h1>
+  <h2 id="eT">Size, test and sanity-check. Right in ChatGPT.</h2>
+  <div class="pill" id="eP"><span class="dot"></span>Live now in the ChatGPT plugin directory</div>
+</div></section>
+<div class="disc" id="disc">Educational analysis, not financial advice. Read-only: it places no trades and holds no funds.<br>Live data from OKX, Hyperliquid, GoPlus and DEX Screener, captured Nov 17, 2026. ChatGPT is a trademark of OpenAI.</div>
+
+<script>
+const LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#4F46E5"/><g fill="#FFFFFF" transform="translate(112 112) scale(9) translate(0 -3.5)"><path clip-rule="evenodd" fill-rule="evenodd" d="M25.483 22.447c-6.876 0-12.449-5.57-12.449-12.437 0-3.595-2.9-6.510-6.517-6.510C2.933 3.5 0 6.415 0 10.010s2.9 6.510 6.517 6.510h.033c6.843 0 12.383 5.571 12.415 12.438v.032c0 3.595 2.9 6.510 6.518 6.510A6.503 6.503 0 0 0 32 28.990c-.033-3.628-2.933-6.543-6.517-6.543"/><path clip-rule="evenodd" fill-rule="evenodd" d="M6.55 22.448c-3.585 0-6.517 2.915-6.517 6.510s2.9 6.510 6.517 6.510a6.503 6.503 0 0 0 6.517-6.510c-.032-3.595-2.933-6.510-6.517-6.510M25.483 3.5c3.6 0 6.517 2.915 6.517 6.510a6.514 6.514 0 0 1-6.517 6.510 6.514 6.514 0 0 1-6.517-6.510 6.514 6.514 0 0 1 6.517-6.510"/></g></svg>';
+document.querySelectorAll('.logo').forEach(e=>e.innerHTML=LOGO);
+document.querySelectorAll('.ok').forEach(e=>e.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>');
+
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,b)=>clamp((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3);
+const eo5=x=>1-Math.pow(1-x,5);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=x=>{const c1=1.4,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const lerp=(a,b,x)=>a+(b-a)*x;
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function style(el,o,tr,extra){el.style.opacity=o;el.style.transform=tr||'';if(extra)Object.assign(el.style,extra)}
+function win(t,a,b,fi=.4,fo=.4){return Math.min(eo(P(t,a,a+fi)),1-eio(P(t,b-fo,b)))}
+// slide-in/slide-out scene wrapper: enters from below, exits upward
+function scene(el,t,a,b,dy=70){
+  const i=eo5(P(t,a,a+.55)),o=eio(P(t,b-.5,b));
+  const vis=t>=a-.01&&t<=b+.01;
+  el.style.display=vis?'flex':'none';
+  if(!vis)return;
+  style(el,Math.min(i,1-o),`translateY(${(1-i)*dy-o*dy}px)`);
+}
+const caretOn=(t,typing)=>typing||Math.floor(t*2.4)%2===0;
+
+// ---------- timeline ----------
+const T={
+  barIn:0, zoomOut:[3.2,4.5],
+  prompts:[
+    {s:'Should I take this trade?',a:1.0,cps:17,end:4.75},
+    {s:'Is Bitcoin funding crowded right now?',a:4.95,cps:40,end:6.15},
+    {s:'Is PEPE safe to buy?',a:6.3,cps:34,end:7.35},
+    {s:'Size a SOL long at 150, stop 142',a:7.5,cps:40,end:8.6},
+    {s:'Stress test my portfolio',a:8.75,cps:36,end:9.75},
+  ],
+  barOut:9.75,
+  head:[9.85,11.7], headText:'Can ChatGPT check it first?',
+  intro:[11.6,15.2], think:[12.1,13.0], reply:{s:'Now it can. With Sperax Trading Desk.',a:13.0,cps:30},
+  btc:[15.0,20.6], sol:[20.4,26.0], pepe:[25.8,31.4],
+  ro:[31.3,34.0], check:[33.9,36.0], tools:[35.9,38.6], end:[38.5,43.0],
+};
+const DURATION=43.0;
+const SFX={type:[],whoosh:[],pop:[],ding:[],boom:[]};
+T.prompts.forEach(p=>{for(let i=0;i<p.s.length;i++)if(p.s[i]!==' ')SFX.type.push(+(p.a+i/p.cps).toFixed(3))});
+for(let i=0;i<T.reply.s.length;i++)if(T.reply.s[i]!==' ')SFX.type.push(+(T.reply.a+i/T.reply.cps).toFixed(3));
+SFX.whoosh.push(3.2,9.75,11.6,15.0,20.4,25.8,31.3,35.9);
+SFX.boom.push(9.85,33.95,38.55);
+[T.btc,T.sol,T.pepe].forEach(([a])=>{SFX.ding.push(+(a+1.15).toFixed(2));SFX.pop.push(+(a+1.2).toFixed(2))});
+SFX.ding.push(31.55);
+
+// head words
+const HW=T.headText.split(' ');
+$('head').innerHTML=HW.map((w,i)=>`<span>${esc(w)}${i<HW.length-1?' ':''}</span>`).join('');
+const CW=['Check','the','trade','before','you','take','it.'];
+$('checkHead').innerHTML='<div>'+CW.slice(0,3).map(w=>`<span>${w} </span>`).join('')+'</div><div>'+CW.slice(3).map(w=>`<span class="${w==='before'?'grad':''}">${w}${w==='it.'?'':' '}</span>`).join('')+'</div>';
+
+// pepe checks
+const CHECKS=[
+  ['good','Not a honeypot'],['warn','Owner can pause transfers'],
+  ['good','0% buy tax · 0% sell tax'],['warn','Owner can blacklist wallets'],
+  ['good','578,053 holders'],['warn','LP not locked, can be pulled'],
+  ['good','$27.4M liquidity · 19 pairs'],['good','1,313 days old'],
+];
+const ICG='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const ICW='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="3.4" stroke-linecap="round"><path d="M12 6v8M12 18.5v.01"/></svg>';
+$('pChecks').innerHTML=CHECKS.map(([c,s])=>`<div class="chk ${c}"><span class="ic">${c==='good'?ICG:ICW}</span>${s}</div>`).join('');
+
+// ladder
+const LY=p=>14+(184-p)/(184-138)*300;
+const LV=[[180,'TP2','#059669'],[165,'TP1','#059669'],[150,'Entry','#4F46E5'],[142,'Stop','#DC2626']];
+$('ladder').innerHTML=`
+<rect id="zR" x="150" width="360" fill="rgba(16,185,129,.12)" rx="6"/>
+<rect id="zL" x="150" width="360" fill="rgba(239,68,68,.12)" rx="6"/>
+${LV.map(([p,l,c],i)=>`<g id="lv${i}"><line x1="150" x2="510" y1="${LY(p)}" y2="${LY(p)}" stroke="${c}" stroke-width="${l==='Entry'?4:3}" ${l==='Entry'?'':'stroke-dasharray="10 8"'}/>
+<text x="0" y="${LY(p)+10}" font-family="Inter" font-size="27" font-weight="650" fill="${c}">${l}</text>
+<text x="132" y="${LY(p)+10}" text-anchor="end" font-family="Inter" font-size="27" font-weight="700" fill="#0d0d0d">${p}</text></g>`).join('')}
+<circle id="pDot" r="10" fill="#4F46E5" stroke="#fff" stroke-width="4"/>`;
+
+// tools marquee
+const TOOLS='get_derivatives_positioning build_trade_plan backtest_signal_strategy scan_token compare_swap_quotes review_wallet stress_test_portfolio analyze_coin get_fear_greed_index get_market_regime get_macro_dashboard get_traditional_market_chart get_crypto_stock_quotes get_market_intelligence get_market_sentiment get_global_market_stats get_top_coins get_trending_coins get_whale_alerts get_exchange_flows get_tracked_wallet_activity get_gas_prices get_bitcoin_network_stats get_new_dex_listings get_funding_rates get_open_interest get_liquidations get_long_short_ratios get_options_overview get_etf_flows get_dex_volumes get_defi_overview get_chain_tvl get_top_defi_protocols get_protocol_revenue get_defi_yields get_stablecoin_stats get_bridge_flows get_token_unlocks get_governance_proposals get_onchain_ai_agents get_crypto_news get_sperax_protocol_stats'.split(' ');
+const ROWS=7;
+$('marq').innerHTML=Array.from({length:ROWS},(_,r)=>{
+  const items=TOOLS.filter((_,i)=>i%ROWS===r);const s=items.concat(items,items).map(x=>`<span>${x}</span>`).join('');
+  return `<div class="mrow" id="mr${r}">${s}</div>`}).join('');
+
+const els={sBar:$('sBar'),bar:$('bar'),barTxt:$('barTxt'),send:$('send'),sHead:$('sHead'),sIntro:$('sIntro'),sBtc:$('sBtc'),sSol:$('sSol'),sPepe:$('sPepe'),sRo:$('sRo'),sCheck:$('sCheck'),sTools:$('sTools'),sEnd:$('sEnd')};
+
+function toolRow(sec,t,a){
+  const row=sec.querySelector('.tool'),spin=row.querySelector('.spin'),ok=row.querySelector('.ok');
+  const i=eo(P(t,a+.35,a+.7));
+  style(row,i,`translateY(${(1-i)*16}px)`);
+  spin.style.transform=`rotate(${t*540}deg)`;
+  const done=P(t,a+1.1,a+1.3);
+  spin.style.opacity=1-done;ok.style.opacity=done;ok.style.transform=`scale(${lerp(.4,1,eb(done))})`;
+  const card=sec.querySelector('.card'),c=eo5(P(t,a+1.15,a+1.85));
+  style(card,c,`translateY(${(1-c)*90}px) scale(${lerp(.96,1,c)})`);
+  return a+1.15;
+}
+
+function render(t){
+  // ---------- input bar ----------
+  const barVis=t<T.barOut+.6;
+  els.sBar.style.display=barVis?'flex':'none';
+  if(barVis){
+    const zi=eio(P(t,T.zoomOut[0],T.zoomOut[1]));
+    const s0=lerp(2.05,1.9,P(t,0,3.2));
+    const sc=lerp(s0,1,zi)*lerp(1,1.06,P(t,T.zoomOut[1],T.barOut));
+    const tx=lerp(560,0,zi);
+    const out=eio(P(t,T.barOut,T.barOut+.45));
+    const inn=eo(P(t,0,.6));
+    style(els.sBar,inn*(1-out),`translateX(${tx}px) scale(${sc*lerp(1,.94,out)})`,{filter:`blur(${out*10}px)`});
+    // text
+    let html='',typing=false;
+    const cur=T.prompts.find(p=>t<p.end)||T.prompts[T.prompts.length-1];
+    if(t<T.prompts[0].a){html='<span class="ph">Ask anything</span>';}
+    else{
+      const n=Math.floor(clamp((t-cur.a)*cur.cps,0,cur.s.length));
+      typing=t>=cur.a&&n<cur.s.length;
+      const fadeOut=P(t,cur.end-.18,cur.end);
+      html=`<span style="opacity:${1-fadeOut}">${esc(cur.s.slice(0,n))}</span>`;
+      if(t<cur.a)html='';
+    }
+    const caret=`<span class="caret" style="opacity:${caretOn(t,typing)?1:0}"></span>`;
+    els.barTxt.innerHTML=t<T.prompts[0].a?caret+html:html+caret;
+    // voice bars breathe
+    [...els.send.children].forEach((b,i)=>{b.style.height=(14+10*Math.abs(Math.sin(t*3+i*1.3)))+'px'});
+  }
+
+  // ---------- headline ----------
+  {
+    const [a,b]=T.head;const vis=t>=a&&t<=b+.05;
+    els.sHead.style.display=vis?'flex':'none';
+    if(vis){
+      const o=eio(P(t,b-.45,b));
+      style(els.sHead,1-o,`scale(${lerp(1.04,1,eo(P(t,a,b)))*lerp(1,.9,o)})`,{filter:`blur(${o*8}px)`});
+      [...$('head').children].forEach((w,i)=>{const x=eo5(P(t,a+i*.09,a+i*.09+.55));style(w,x,`translateY(${(1-x)*50}px)`,{filter:`blur(${(1-x)*14}px)`})});
+    }
+  }
+
+  // ---------- intro chat ----------
+  scene(els.sIntro,t,T.intro[0],T.intro[1]);
+  if(t>=T.intro[0]&&t<=T.intro[1]){
+    const bub=$('iBub'),bi=eb(P(t,T.intro[0]+.05,T.intro[0]+.5));
+    style(bub,clamp(bi*1.5),`scale(${lerp(.85,1,bi)})`,{transformOrigin:'100% 50%'});
+    const th=$('iThink');const tv=win(t,T.think[0],T.think[1]+.15,.25,.2);
+    th.style.opacity=tv;th.style.backgroundPosition=`${100-((t-T.think[0])*110)%300}% 0`;
+    th.style.display=t<T.think[1]+.15?'block':'none';
+    const r=T.reply,n=Math.floor(clamp((t-r.a)*r.cps,0,r.s.length)),bs=r.s.indexOf('Sperax');
+    const typing=t>=r.a&&n<r.s.length;
+    $('iReply').style.display=t>=T.think[1]+.15?'block':'none';
+    $('iReply').innerHTML=esc(r.s.slice(0,Math.min(n,bs)))+(n>bs?`<b class="grad">${esc(r.s.slice(bs,n))}</b>`:'')+`<span class="caret" style="height:76px;width:6px;vertical-align:-8px;opacity:${t>=r.a&&caretOn(t,typing)?1:0}"></span>`;
+    [...$('iPills').children].forEach((p,i)=>{const x=eb(P(t,14.35+i*.1,14.75+i*.1));style(p,clamp(x),`translateY(${(1-x)*24}px)`)});
+  }
+
+  // ---------- BTC ----------
+  scene(els.sBtc,t,T.btc[0],T.btc[1]);
+  if(t>=T.btc[0]&&t<=T.btc[1]){
+    const c=toolRow(els.sBtc,t,T.btc[0]);
+    const lp=eio(P(t,c+.4,c+1.4));
+    const longPct=lerp(50,72.4,lp);
+    $('lsG').style.width=longPct+'%';
+    $('lsG').textContent=`Long ${Math.round(longPct)}%`;$('lsR').textContent=`Short ${Math.round(100-longPct)}%`;
+    $('lsVal').textContent=`${(longPct/(100-longPct)).toFixed(2)} : 1`;
+    const sp=eo(P(t,c+.6,c+1.6));
+    $('bFund').textContent=(4.93*sp).toFixed(2)+'%';
+    $('bTop').textContent=lerp(1,1.6455,sp).toFixed(2)+' : 1';
+    els.sBtc.querySelectorAll('.stat').forEach((s,i)=>{const x=eo(P(t,c+.5+i*.08,c+.9+i*.08));style(s,x,`translateY(${(1-x)*20}px)`)});
+    const sg=eo(P(t,c+1.6,c+2));style($('bSig'),sg,`translateX(${(1-sg)*-20}px)`);
+  }
+
+  // ---------- SOL ----------
+  scene(els.sSol,t,T.sol[0],T.sol[1]);
+  if(t>=T.sol[0]&&t<=T.sol[1]){
+    const c=toolRow(els.sSol,t,T.sol[0]);
+    LV.forEach((_,i)=>{const order=[2,3,1,0].indexOf(i);const x=eo(P(t,c+.35+order*.14,c+.75+order*.14));const g=$('lv'+i);g.style.opacity=x;g.style.transform=`translateX(${(1-x)*-24}px)`});
+    const zr=eio(P(t,c+.7,c+1.5)),zl=eio(P(t,c+.7,c+1.2));
+    const yE=LY(150);
+    const zR=$('zR');zR.setAttribute('y',lerp(yE,LY(180),zr));zR.setAttribute('height',(yE-LY(180))*zr);
+    const zL=$('zL');zL.setAttribute('y',yE);zL.setAttribute('height',(LY(142)-yE)*zl);
+    // price dot travels entry -> TP1 -> TP2
+    const pp=P(t,c+1.5,c+3.6);const price=pp<.5?lerp(150,165,eio(pp*2)):lerp(165,180,eio(pp*2-1));
+    const dot=$('pDot');dot.setAttribute('cx',330);dot.setAttribute('cy',LY(price));dot.style.opacity=eo(P(t,c+1.3,c+1.5));
+    const t1=eb(P(t,c+2.1,c+2.45)),t2=eb(P(t,c+3.1,c+3.45));
+    style($('tp1'),clamp(.25+t1),`scale(${lerp(.92,1,clamp(t1))})`,{filter:`saturate(${clamp(t1)})`});
+    style($('tp2'),clamp(.25+t2),`scale(${lerp(.92,1,clamp(t2))})`,{filter:`saturate(${clamp(t2)})`});
+    const sp=eo(P(t,c+.5,c+1.7));
+    $('sUnits').textContent=(12.27596366*sp).toFixed(2)+' SOL';
+    $('sNot').textContent='$'+fmt(1841.39*sp);
+    $('sRisk').textContent='$'+fmt(100*sp);
+    $('sR').textContent=(2.742*sp).toFixed(2)+'R';
+    $('sBe').textContent=(26.72*sp).toFixed(1)+'%';
+    els.sSol.querySelectorAll('.row').forEach((r,i)=>{const x=eo(P(t,c+.4+i*.09,c+.8+i*.09));style(r,x,`translateX(${(1-x)*30}px)`)});
+  }
+
+  // ---------- PEPE ----------
+  scene(els.sPepe,t,T.pepe[0],T.pepe[1]);
+  if(t>=T.pepe[0]&&t<=T.pepe[1]){
+    const c=toolRow(els.sPepe,t,T.pepe[0]);
+    const v=eb(P(t,c+.4,c+.8));style($('pVerdict'),clamp(v),`scale(${lerp(.6,1,v)})`);
+    const order=[0,2,4,6,7,1,3,5];
+    [...$('pChecks').children].forEach((el,i)=>{const k=order.indexOf(i);const x=eb(P(t,c+.75+k*.17,c+1.1+k*.17));style(el,clamp(x),`translateY(${(1-x)*24}px) scale(${lerp(.95,1,clamp(x))})`)});
+  }
+
+  // ---------- read-only ----------
+  {
+    const [a,b]=T.ro;const vis=t>=a&&t<=b+.05;els.sRo.style.display=vis?'flex':'none';
+    if(vis){
+      const o=eio(P(t,b-.4,b));style(els.sRo,1-o,`scale(${lerp(1,.94,o)})`,{filter:`blur(${o*8}px)`});
+      const ci=eb(P(t,a,a+.45));$('roCirc').style.transform=`scale(${ci})`;$('roCirc').style.transformOrigin='90px 90px';
+      const path=$('roPath');const L=110;path.style.strokeDasharray=L;path.style.strokeDashoffset=L*(1-eo(P(t,a+.2,a+.55)));
+      const h=eo5(P(t,a+.3,a+.85));style($('roH'),h,`translateY(${(1-h)*40}px)`);
+      [...$('roSubs').children].forEach((s,i)=>{const x=eo(P(t,a+.85+i*.22,a+1.25+i*.22));style(s,x,`translateY(${(1-x)*24}px)`)});
+    }
+  }
+
+  // ---------- check before ----------
+  {
+    const [a,b]=T.check;const vis=t>=a&&t<=b+.05;els.sCheck.style.display=vis?'flex':'none';
+    if(vis){
+      const o=eio(P(t,b-.4,b));style(els.sCheck,1-o,`scale(${lerp(1.03,1,eo(P(t,a,b)))*lerp(1,.94,o)})`,{filter:`blur(${o*8}px)`});
+      $('checkHead').querySelectorAll('span').forEach((w,i)=>{const x=eo5(P(t,a+.05+i*.08,a+.6+i*.08));style(w,x,`translateY(${(1-x)*50}px)`,{filter:`blur(${(1-x)*14}px)`})});
+    }
+  }
+
+  // ---------- tools ----------
+  {
+    const [a,b]=T.tools;const vis=t>=a&&t<=b+.05;els.sTools.style.display=vis?'flex':'none';
+    if(vis){
+      const i=eo(P(t,a,a+.5)),o=eio(P(t,b-.4,b));
+      style(els.sTools,Math.min(i,1-o),`scale(${lerp(1.06,1,eo(P(t,a,b)))})`);
+      for(let r=0;r<ROWS;r++){const dir=r%2?1:-1;$('mr'+r).style.transform=`translateX(${-900+dir*(t-a)*90+(r*137)%400}px)`}
+      $('tN').textContent=Math.round(43*eo(P(t,a+.15,a+1.3)));
+    }
+  }
+
+  // ---------- end ----------
+  {
+    const [a]=T.end;const vis=t>=a;els.sEnd.style.display=vis?'flex':'none';
+    if(vis){
+      els.sEnd.style.opacity=1;els.sEnd.style.transform='';
+      const l=eb(P(t,a,a+.6));style($('eLogo'),clamp(l*1.4),`scale(${lerp(.5,1,l)}) rotate(${(1-l)*-12}deg)`);
+      const h=eo5(P(t,a+.3,a+.9));style($('eH'),h,`translateY(${(1-h)*40}px)`,{filter:`blur(${(1-h)*10}px)`});
+      const g=eo5(P(t,a+.55,a+1.1));style($('eT'),g,`translateY(${(1-g)*30}px)`);
+      const p=eb(P(t,a+.9,a+1.35));style($('eP'),clamp(p),`scale(${lerp(.85,1,p)})`);
+      $('eP').querySelector('.dot').style.boxShadow=`0 0 0 ${6+5*Math.sin(t*5)}px rgba(5,150,105,.18)`;
+    }
+    $('disc').style.opacity=eo(P(t,a+1.2,a+1.7));
+  }
+  $('bg').style.opacity=lerp(0,1,eo(P(t,9.8,11)))*(1-.5*eio(P(t,35.9,36.4)));
+}
+window.render=render;window.DURATION=DURATION;window.SFX=SFX;
+render(0);
+</script>
+</body></html>
