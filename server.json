@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.nirholas/sperax-trading-desk",
+  "title": "Sperax Trading Desk",
+  "description": "Read-only crypto trade analysis: positioning, sizing, backtests, token scans and 35 market feeds",
+  "version": "2.0.0",
+  "websiteUrl": "https://nirholas.github.io/chatgpt-plugin/",
+  "repository": {
+    "url": "https://github.com/nirholas/chatgpt-plugin",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://nirholas.github.io/chatgpt-plugin/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    }
+  ]
+}

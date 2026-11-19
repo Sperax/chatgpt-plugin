@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: If you reference Sperax Trading Desk in research or writing, please cite it as below.
+type: software
+title: Sperax Trading Desk
+abstract: >-
+  Read-only crypto trade analysis for ChatGPT and any MCP client: futures positioning,
+  trade sizing, backtests, token scans and 35 live market feeds, served over one public
+  Model Context Protocol endpoint.
+authors:
+  - name: Sperax
+    website: https://www.sperax.io
+version: 2.0.0
+date-released: 2026-11-17
+license: Apache-2.0
+url: https://nirholas.github.io/chatgpt-plugin/
+repository-code: https://github.com/nirholas/chatgpt-plugin
+keywords:
+  - chatgpt
+  - model-context-protocol
+  - mcp
+  - crypto
+  - trading
+  - backtesting
+  - risk-management
