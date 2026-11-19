@@ -377,6 +377,26 @@ ol {
   white-space: nowrap;
 }
 
+.brand img {
+  display: block;
+  width: auto;
+  height: 24px;
+}
+
+.brand span {
+  padding-left: 11px;
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 20px;
+  transition: color 0.2s;
+}
+
+.brand:hover span,
+.brand:focus-visible span {
+  color: var(--ink);
+}
+
 .nav-links {
   display: flex;
   gap: 32px;
@@ -2130,6 +2150,10 @@ p.none {
 
   .brand span {
     font-size: 15px;
+  }
+
+  .nav .brand span {
+    display: none;
   }
 
   .nav-inner > .btn {
