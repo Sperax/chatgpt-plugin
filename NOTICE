@@ -1,0 +1,20 @@
+Sperax Trading Desk ChatGPT plugin
+Copyright 2026 Sperax
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Trademarks
+----------
+"Sperax", "Sperax Trading Desk", "SperaxOS" and the Sperax logos are trademarks of
+Sperax. As stated in Section 6 of the Apache License, the license does not grant
+permission to use these names or logos, except as required for reasonable and
+customary use in describing the origin of the work. Forks and derivative plugins
+must use their own name and logo.
+
+ChatGPT is a trademark of OpenAI. This repository is not affiliated with or
+endorsed by OpenAI beyond the plugin's listing in the ChatGPT plugin directory.
+
+Third-party components
+----------------------
+launch-video/fonts/Inter.woff2 and launch-video/fonts/JetBrainsMono.woff2 are
+licensed under the SIL Open Font License, Version 1.1 (see launch-video/fonts/OFL.txt).
