@@ -1,0 +1,29 @@
+{
+  "name": "sperax-trading-desk-chatgpt-plugin",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Sperax Trading Desk plugin for ChatGPT: plugin package, pre-submission validator and launch video.",
+  "homepage": "https://github.com/nirholas/chatgpt-plugin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nirholas/chatgpt-plugin.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Sperax <support@sperax.io> (https://www.sperax.io)",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check",
+    "update-lock": "node scripts/build.mjs --update-lock"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0"
+  },
+  "engines": {
+    "node": ">=20.11"
+  }
+}
