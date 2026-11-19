@@ -4,7 +4,7 @@
 [![MCP endpoint](https://img.shields.io/badge/MCP-streamable_HTTP-6d28d9)](https://nirholas.github.io/chatgpt-plugin/#install)
 [![Tools](https://img.shields.io/badge/tools-43_read--only-0f766e)](https://nirholas.github.io/chatgpt-plugin/tools.html)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
-[![Pages](https://github.com/nirholas/chatgpt-plugin/actions/workflows/pages.yml/badge.svg)](https://github.com/nirholas/chatgpt-plugin/actions/workflows/pages.yml)
+[![Website](https://img.shields.io/badge/website-nirholas.github.io-0f766e)](https://nirholas.github.io/chatgpt-plugin/)
 
 Official Sperax Trading Desk plugin for ChatGPT, live in the
 [ChatGPT plugin directory](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c).
