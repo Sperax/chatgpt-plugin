@@ -1,5 +1,11 @@
 # Sperax Trading Desk — ChatGPT plugin
 
+[![ChatGPT plugin](https://img.shields.io/badge/ChatGPT-plugin_directory-10a37f?logo=openai&logoColor=white)](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c)
+[![MCP endpoint](https://img.shields.io/badge/MCP-streamable_HTTP-6d28d9)](https://nirholas.github.io/chatgpt-plugin/#install)
+[![Tools](https://img.shields.io/badge/tools-43_read--only-0f766e)](https://nirholas.github.io/chatgpt-plugin/tools.html)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Pages](https://github.com/nirholas/chatgpt-plugin/actions/workflows/pages.yml/badge.svg)](https://github.com/nirholas/chatgpt-plugin/actions/workflows/pages.yml)
+
 Official Sperax Trading Desk plugin for ChatGPT, live in the
 [ChatGPT plugin directory](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c).
 Read-only crypto analysis: derivatives positioning, coin analysis, trade sizing, backtests,
@@ -14,11 +20,12 @@ build transactions or sign anything, and needs no sign-in.
 | Listing | [Sperax Trading Desk](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c) · developer Sperax · category Finance |
 | Version | 2.0.0, live since 2026-11-17 |
 | MCP endpoint | `https://chat.sperax.io/webapi/mcp/trading-copilot` (streamable HTTP, no auth) |
-| Website | <https://www.sperax.io> · <https://chat.sperax.io> |
+| Website | [nirholas.github.io/chatgpt-plugin](https://nirholas.github.io/chatgpt-plugin/) · <https://www.sperax.io> · <https://chat.sperax.io> |
+| Tool reference | [All 43 tools with every parameter](https://nirholas.github.io/chatgpt-plugin/tools.html) |
 | Support | <https://chat.sperax.io/support> |
 | Legal | [Terms](https://chat.sperax.io/terms) · [Privacy](https://chat.sperax.io/privacy) |
 
-<video src="launch-video/sperax-trading-desk-chatgpt.mp4" controls width="100%"></video>
+[![Sperax Trading Desk: crypto trade analysis for ChatGPT and any MCP client](.github/social-preview.png)](https://nirholas.github.io/chatgpt-plugin/)
 
 [Watch the 43-second launch video](launch-video/sperax-trading-desk-chatgpt.mp4)
 
@@ -31,6 +38,96 @@ In ChatGPT, add **Sperax Trading Desk** from the plugin directory and ask:
 - "Backtest buying ETH when RSI drops below 30 and selling above 70 over the last 180 days."
 - "Scan PEPE for honeypot risk, taxes and holder concentration."
 - "Stress test 2 BTC, 20 ETH and 500 SOL through FTX and LUNA."
+
+## Use it in other MCP clients
+
+The same 43 tools work in any client that supports remote streamable-HTTP MCP servers. No key.
+
+[![Add to Cursor](https://img.shields.io/badge/Add_to-Cursor-000000)](https://cursor.com/install-mcp?name=sperax-trading-desk&config=eyJ1cmwiOiJodHRwczovL2NoYXQuc3BlcmF4LmlvL3dlYmFwaS9tY3AvdHJhZGluZy1jb3BpbG90In0=)
+[![Add to VS Code](https://img.shields.io/badge/Add_to-VS_Code-007acc?logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=sperax-trading-desk&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fchat.sperax.io%2Fwebapi%2Fmcp%2Ftrading-copilot%22%7D)
+
+**Claude Code**
+
+```bash
+claude mcp add --transport http sperax-trading-desk https://chat.sperax.io/webapi/mcp/trading-copilot
+```
+
+**Claude Desktop**: add a custom connector with the endpoint URL in Settings → Connectors, or
+put this in `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://chat.sperax.io/webapi/mcp/trading-copilot"
+      ]
+    }
+  }
+}
+```
+
+**Cursor** (`~/.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "url": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+**VS Code** (`.vscode/mcp.json`):
+
+```json
+{
+  "servers": {
+    "sperax-trading-desk": {
+      "type": "http",
+      "url": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+**Windsurf** (`~/.codeium/windsurf/mcp_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "serverUrl": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+**Gemini CLI** (`~/.gemini/settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "httpUrl": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+**Codex CLI** (`~/.codex/config.toml`):
+
+```toml
+[mcp_servers.sperax-trading-desk]
+url = "https://chat.sperax.io/webapi/mcp/trading-copilot"
+```
+
+[`server.json`](server.json) describes the server for the
+[MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.nirholas/sperax-trading-desk`.
 
 ## Tools
 
@@ -117,7 +214,7 @@ curl -s https://chat.sperax.io/webapi/mcp/trading-copilot \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_fear_greed_index","arguments":{}}}'
 ```
 
-Any MCP client that supports remote streamable-HTTP servers can connect to the same URL.
+Client setup is in [Use it in other MCP clients](#use-it-in-other-mcp-clients).
 
 ## Repository layout
 
@@ -128,10 +225,20 @@ Any MCP client that supports remote streamable-HTTP servers can connect to the s
 │   ├── mcp.json                # remote MCP server declaration
 │   ├── skills/                 # setup, pre-trade-check, backtest-translation, stress-test
 │   └── assets/                 # logo and composer icon, light and dark
-├── scripts/build.mjs           # validator and packager
+├── scripts/
+│   ├── build.mjs               # validator and packager
+│   ├── site.mjs                # GitHub Pages site generator
+│   └── lib/                    # shared MCP client
+├── site/                       # Pages stylesheet and copy-button script
+├── server.json                 # MCP Registry server description
+├── glama.json                  # Glama MCP directory maintainers
 ├── tool-metadata.lock.json     # published tool contract (names, inputs, annotations)
 ├── launch-video/               # source and render of the launch video
-├── docs/                       # runbook and submission history
+├── docs/                       # runbook, launch kit and submission history
+├── .github/                    # Pages workflow, issue templates, social preview
+├── CITATION.cff                # citation metadata
+├── CONTRIBUTING.md
+├── SECURITY.md
 ├── LICENSE                     # Apache-2.0
 └── NOTICE                      # trademark and third-party notices
 ```
@@ -141,10 +248,11 @@ Any MCP client that supports remote streamable-HTTP servers can connect to the s
 Requires Node.js 20.11 or later.
 
 ```bash
-npm install
+npm ci
 npm run check        # validate the package and the live tool contract
 npm run build        # validate, then write dist/sperax-trading-copilot-<version>.zip
 npm run update-lock  # accept the live tool contract into tool-metadata.lock.json
+npm run site         # build the GitHub Pages site into _site/
 ```
 
 `scripts/build.mjs` checks the manifest, skills and assets against every limit in OpenAI's
@@ -164,6 +272,22 @@ Point it at a staging server with `MCP_URL`:
 MCP_URL=https://staging.example.com/webapi/mcp/trading-copilot npm run check
 ```
 
+### Website
+
+`scripts/site.mjs` builds [nirholas.github.io/chatgpt-plugin](https://nirholas.github.io/chatgpt-plugin/) from the live endpoint: the landing page with
+install steps for every client, a reference page for all 43 tools generated from their input
+schemas, schema.org structured data, Open Graph and X cards, `sitemap.xml`, `robots.txt`, a web
+manifest, [`llms.txt`](https://nirholas.github.io/chatgpt-plugin/llms.txt) and [`llms-full.txt`](https://nirholas.github.io/chatgpt-plugin/llms-full.txt) for AI
+assistants, `server.json`, and an MCP server card at
+[`.well-known/mcp/server-card.json`](https://nirholas.github.io/chatgpt-plugin/.well-known/mcp/server-card.json). The social card
+and icons are rendered with Playwright Chromium (run `npx playwright install chromium` once).
+`--social-preview` also writes `.github/social-preview.png`.
+
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) rebuilds and deploys the site on
+every push to `main`, weekly, and on demand. A failed build leaves the last deployment live.
+
+### Packaging
+
 The ZIP in `dist/` is what gets uploaded in the OpenAI plugin portal. The full submission,
 review and maintenance process is in [docs/runbook.md](docs/runbook.md).
 
@@ -178,6 +302,8 @@ timings. The tool cards show real responses from the live endpoint.
 
 - [Runbook](docs/runbook.md): live listing, architecture, setup, changing tools, changelog,
   troubleshooting.
+- [Launch kit](docs/launch-kit.md): announcement copy for X, LinkedIn, Reddit, Hacker News
+  and Product Hunt, and where to list the MCP server.
 - [Submission checklist](docs/submission-checklist.md): OpenAI's review rules mapped to this
   plugin (historical, 1.2.0).
 - [GPT-to-plugin gap analysis](docs/gpt-to-plugin-gap-analysis.md): how the Custom GPT became
@@ -198,3 +324,8 @@ Sperax names and logos are trademarks and are not licensed; see [NOTICE](NOTICE)
 `launch-video/fonts/` are under the [SIL Open Font License 1.1](launch-video/fonts/OFL.txt).
 
 Nothing this plugin returns is financial advice.
+
+## Contributing and security
+
+Bug reports and tool requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md). Report
+vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
