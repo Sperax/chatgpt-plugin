@@ -20,6 +20,8 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSy
 import path from 'node:path';
 import sharp from 'sharp';
 
+import { fetchLiveMetadata } from './lib/mcp.mjs';
+
 const ROOT = path.resolve(import.meta.dirname, '..');
 const PLUGIN_NAME = 'sperax-trading-copilot';
 const PLUGIN_DIR = path.join(ROOT, PLUGIN_NAME);
@@ -29,94 +31,12 @@ const LOCK_PATH = path.join(ROOT, 'tool-metadata.lock.json');
 const MAX_ASSET_BYTES = 5 * 1024 * 1024;
 const ASSET_EXTENSIONS = new Set(['.jpeg', '.jpg', '.png', '.svg', '.webp']);
 const MIN_ICON_PX = 48;
-const MCP_PROTOCOL_VERSION = '2025-06-18';
-const MCP_TIMEOUT_MS = 30_000;
 
 const args = new Set(process.argv.slice(2));
 const errors = [];
 const fail = (message) => errors.push(message);
 
 const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
-
-// ---------------------------------------------------------------------------
-// Live MCP metadata
-// ---------------------------------------------------------------------------
-
-const parseRpcBody = (contentType, body) => {
-  if (contentType.includes('text/event-stream')) {
-    const messages = body
-      .split(/\r?\n/)
-      .filter((line) => line.startsWith('data:'))
-      .map((line) => line.slice(5).trim())
-      .filter(Boolean)
-      .map((data) => JSON.parse(data));
-    return messages.find((m) => 'result' in m || 'error' in m);
-  }
-  return JSON.parse(body);
-};
-
-const createMcpClient = (url) => {
-  let sessionId;
-  let nextId = 1;
-
-  return async (method, params) => {
-    const headers = {
-      accept: 'application/json, text/event-stream',
-      'content-type': 'application/json',
-      'mcp-protocol-version': MCP_PROTOCOL_VERSION,
-    };
-    if (sessionId) headers['mcp-session-id'] = sessionId;
-
-    let response;
-    try {
-      response = await fetch(url, {
-        body: JSON.stringify({ id: nextId++, jsonrpc: '2.0', method, params }),
-        headers,
-        method: 'POST',
-        signal: AbortSignal.timeout(MCP_TIMEOUT_MS),
-      });
-    } catch (error) {
-      throw new Error(`MCP ${method} request to ${url} failed: ${error.message}`);
-    }
-
-    const body = await response.text();
-    if (!response.ok) {
-      throw new Error(`MCP ${method} returned HTTP ${response.status}: ${body.slice(0, 200)}`);
-    }
-    sessionId = response.headers.get('mcp-session-id') ?? sessionId;
-
-    let message;
-    try {
-      message = parseRpcBody(response.headers.get('content-type') ?? '', body);
-    } catch {
-      throw new Error(`MCP ${method} returned a body that is not JSON-RPC: ${body.slice(0, 200)}`);
-    }
-    if (!message) throw new Error(`MCP ${method} returned no JSON-RPC response`);
-    if (message.error) {
-      throw new Error(`MCP ${method} error ${message.error.code}: ${message.error.message}`);
-    }
-    return message.result;
-  };
-};
-
-const fetchLiveMetadata = async (url) => {
-  const rpc = createMcpClient(url);
-  const init = await rpc('initialize', {
-    capabilities: {},
-    clientInfo: { name: 'sperax-plugin-build', version: '1.0.0' },
-    protocolVersion: MCP_PROTOCOL_VERSION,
-  });
-
-  const tools = [];
-  let cursor;
-  do {
-    const page = await rpc('tools/list', cursor ? { cursor } : {});
-    tools.push(...(page.tools ?? []));
-    cursor = page.nextCursor;
-  } while (cursor);
-
-  return { instructions: init.instructions, tools };
-};
 
 // ---------------------------------------------------------------------------
 // Field checks
@@ -442,7 +362,7 @@ const main = async () => {
 
   let live;
   try {
-    live = await fetchLiveMetadata(serverUrl);
+    live = await fetchLiveMetadata(serverUrl, 'sperax-plugin-build');
   } catch (error) {
     process.stderr.write(`Could not read tool metadata from the MCP server:\n  ${error.message}\n`);
     process.exit(1);
