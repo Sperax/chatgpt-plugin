@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "description": "Sperax Trading Desk plugin for ChatGPT: plugin package, pre-submission validator and launch video.",
-  "homepage": "https://nirholas.github.io/chatgpt-plugin/",
+  "homepage": "https://sperax-trading-desk.pages.dev/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nirholas/chatgpt-plugin.git"
@@ -15,7 +15,8 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/build.mjs --check",
     "update-lock": "node scripts/build.mjs --update-lock",
-    "site": "node scripts/site.mjs"
+    "site": "node scripts/site.mjs",
+    "deploy": "node scripts/site.mjs && npx --yes wrangler@4 pages deploy _site --project-name sperax-trading-desk --branch main --commit-dirty=true"
   },
   "dependencies": {
     "fflate": "^0.8.3",

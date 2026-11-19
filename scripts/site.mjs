@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Builds the GitHub Pages site into _site/.
+ * Builds the static site into _site/ (served by Cloudflare Pages; `npm run deploy`).
  *
  * Every tool name, title, description and parameter comes from the live MCP endpoint, so the
  * site cannot drift from what ChatGPT serves. Listing copy comes from plugin.json, skills from
@@ -9,7 +9,7 @@
  *   node scripts/site.mjs                    # write _site/
  *   node scripts/site.mjs --social-preview   # also write .github/social-preview.png
  *
- * Env: SITE_URL (default https://nirholas.github.io/chatgpt-plugin/), MCP_URL (fetch tools
+ * Env: SITE_URL (default https://sperax-trading-desk.pages.dev/), MCP_URL (fetch tools
  * from a staging server; pages still show the production URL).
  */
 import { chromium } from '@playwright/test';
@@ -22,7 +22,7 @@ import { fetchLiveMetadata } from './lib/mcp.mjs';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUT = path.join(ROOT, '_site');
 const PKG = path.join(ROOT, 'sperax-trading-copilot');
-const SITE_URL = new URL(process.env.SITE_URL ?? 'https://nirholas.github.io/chatgpt-plugin/').href;
+const SITE_URL = new URL(process.env.SITE_URL ?? 'https://sperax-trading-desk.pages.dev/').href;
 const REPO_URL = 'https://github.com/nirholas/chatgpt-plugin';
 const STORE_URL = 'https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c';
 const VIDEO_FILE = 'sperax-trading-desk-chatgpt.mp4';
@@ -347,7 +347,7 @@ ${jsonLd.map(ldScript).join('\n')}
     <nav class="nav-links" aria-label="Main">
       <a href="${url('#tools')}">Tools</a>
       <a href="${url('#install')}">Install</a>
-      <a href="${url('tools.html')}">Reference</a>
+      <a href="${url('tools')}">Reference</a>
       <a href="${url('#faq')}">FAQ</a>
       <a href="${REPO_URL}">GitHub</a>
     </nav>
@@ -365,7 +365,7 @@ const footer = () => `<footer class="footer">
         <a class="brand" href="${url()}"><img src="${url('favicon.svg')}" alt="" width="26" height="26"><span>Sperax Trading Desk</span></a>
         <p>Read-only crypto analysis for ChatGPT and any MCP client. Version ${esc(plugin.version)}.</p>
       </div>
-      ${footerNav('Product', [[STORE_URL, 'ChatGPT listing'], [url('tools.html'), 'Tool reference'], [url('#install'), 'Install'], [url('#faq'), 'FAQ']])}
+      ${footerNav('Product', [[STORE_URL, 'ChatGPT listing'], [url('tools'), 'Tool reference'], [url('#install'), 'Install'], [url('#faq'), 'FAQ']])}
       ${footerNav('For agents', [[url('llms.txt'), 'llms.txt'], [url('llms-full.txt'), 'llms-full.txt'], [url('.well-known/mcp/server-card.json'), 'MCP server card'], [url('server.json'), 'server.json']])}
       ${footerNav('Project', [[REPO_URL, 'Source'], [`${REPO_URL}/security/policy`, 'Security'], [iface.supportURL, 'Support'], [iface.privacyPolicyURL, 'Privacy'], [iface.termsOfServiceURL, 'Terms']])}
       ${footerNav('Sperax', [[SOCIALS.website, 'sperax.io'], [SOCIALS.x, 'X'], [SOCIALS.telegram, 'Telegram'], [SOCIALS.github, 'GitHub']])}
@@ -383,7 +383,7 @@ const footer = () => `<footer class="footer">
 const codeBlock = (code, label) =>
   `<div class="code"><pre><code>${esc(code)}</code></pre><button class="copy" type="button" aria-label="Copy ${esc(label)}">Copy</button></div>`;
 
-const toolLink = (name) => `<a class="tool-name" href="${url(`tools.html#${name}`)}">${esc(name)}</a>`;
+const toolLink = (name) => `<a class="tool-name" href="${url(`tools#${name}`)}">${esc(name)}</a>`;
 const requiredOf = (t) => t.inputSchema?.required ?? [];
 const hasCard = (t) => Boolean(t._meta?.['openai/outputTemplate']);
 const countTools = (test) => tools.filter(test).length;
@@ -412,7 +412,7 @@ const heroCards = HERO_TOOLS.map(([name, glyph], i) => {
   const t = toolByName.get(name);
   const required = requiredOf(t);
   return `<li class="fcard">
-  <a href="${url(`tools.html#${t.name}`)}">
+  <a href="${url(`tools#${t.name}`)}">
     <div class="fcard-head"><span class="tile tile-${i + 1}">${glyph}</span><div><h3>${esc(t.title)}</h3><code>${esc(t.name)}</code></div></div>
     <p class="fcard-desc">${esc(blurb(t))}</p>
     <div class="kv"><span class="tiny">Required ${required.length === 1 ? 'input' : 'inputs'}</span><strong>${required.length ? esc(required.join(' · ')) : 'None'}</strong></div>
@@ -423,12 +423,12 @@ const heroCards = HERO_TOOLS.map(([name, glyph], i) => {
 
 const analysisList = analysis
   .map(
-    (t) => `<li><a href="${url(`tools.html#${t.name}`)}"><span class="tl-title">${esc(t.title)}${ARROW_UR}</span><span class="tl-desc">${esc(blurb(t))}</span><code>${esc(t.name)}</code></a></li>`,
+    (t) => `<li><a href="${url(`tools#${t.name}`)}"><span class="tl-title">${esc(t.title)}${ARROW_UR}</span><span class="tl-desc">${esc(blurb(t))}</span><code>${esc(t.name)}</code></a></li>`,
   )
   .join('\n');
 
 const feedList = feeds
-  .map((t) => `<li><a href="${url(`tools.html#${t.name}`)}" title="${esc(blurb(t))}"><span>${esc(t.title.replace(/^Get /, ''))}</span>${ARROW_UR}</a></li>`)
+  .map((t) => `<li><a href="${url(`tools#${t.name}`)}" title="${esc(blurb(t))}"><span>${esc(t.title.replace(/^Get /, ''))}</span>${ARROW_UR}</a></li>`)
   .join('\n');
 
 const skillList = skills
@@ -601,7 +601,7 @@ ${FLOW_PROMPT.tools
   })
   .join('\n')}
         </ol>
-        <div class="step-row"><span>Live endpoint</span><a href="${url('tools.html')}">${SERVER_LINE}${ARROW_UR}</a></div>
+        <div class="step-row"><span>Live endpoint</span><a href="${url('tools')}">${SERVER_LINE}${ARROW_UR}</a></div>
         <p class="step-note">Streamable HTTP, no auth, 120 requests per minute per IP.</p>
       </div>
       <span class="flow-arrow" aria-hidden="true">${ARROW_RIGHT}</span>
@@ -642,7 +642,7 @@ ${analysisList}
       </div>
       <div class="catalog">
         <div class="card">
-          <div class="card-head"><p class="eyebrow">Live catalog</p><a class="pill" href="${url('tools.html')}">Full reference</a></div>
+          <div class="card-head"><p class="eyebrow">Live catalog</p><a class="pill" href="${url('tools')}">Full reference</a></div>
           <div class="card-id">
             <img src="${url('icon-192.png')}" alt="" width="42" height="42">
             <div><strong>Sperax Trading Desk</strong><span>${SERVER_LINE}</span></div>
@@ -704,7 +704,7 @@ ${ANNOTATIONS.map(([label, n]) => `            <li><code>${esc(label)}</code><sp
             <span class="tile tile-1">${HERO_TOOLS[0][1]}</span>
             <h3 class="tcard-num">${feeds.length} feeds</h3>
             <ul class="mini">
-${feeds.slice(0, 4).map((t) => `              <li><a href="${url(`tools.html#${t.name}`)}">${esc(t.title.replace(/^Get /, ''))}${ARROW_UR}</a></li>`).join('\n')}
+${feeds.slice(0, 4).map((t) => `              <li><a href="${url(`tools#${t.name}`)}">${esc(t.title.replace(/^Get /, ''))}${ARROW_UR}</a></li>`).join('\n')}
             </ul>
           </div>
           <p class="tiny">From the live catalog</p>
@@ -857,7 +857,7 @@ const toolsHtml = `${head({
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', item: SITE_URL, name: 'Sperax Trading Desk', position: 1 },
-        { '@type': 'ListItem', item: url('tools.html'), name: 'Tool reference', position: 2 },
+        { '@type': 'ListItem', item: url('tools'), name: 'Tool reference', position: 2 },
       ],
     },
     {
@@ -868,10 +868,10 @@ const toolsHtml = `${head({
       description: TOOLS_DESCRIPTION,
       headline: 'Sperax Trading Desk tool reference',
       publisher: ORG,
-      url: url('tools.html'),
+      url: url('tools'),
     },
   ],
-  page: 'tools.html',
+  page: 'tools',
   title: `Tool reference: ${tools.length} crypto analysis MCP tools · Sperax Trading Desk`,
 })}<main id="main"><section class="page-head">
   <div class="wrap">
@@ -917,7 +917,7 @@ const notFoundHtml = `${head({ description: 'Page not found.', page: '404.html',
     <p class="lead">The link may be out of date. The tools and the install guides are one click away.</p>
     <div class="cta">
       ${btn(url(), 'Home', 'lime')}
-      ${btn(url('tools.html'), 'Tool reference', 'white')}
+      ${btn(url('tools'), 'Tool reference', 'white')}
     </div>
   </div>
 </section>
@@ -951,17 +951,17 @@ const llmsTxt = `# Sperax Trading Desk
 ## Docs
 
 - [Full reference for LLMs](${url('llms-full.txt')}): every tool with its full description and parameters, install steps, limits and FAQ in one file
-- [Tool reference](${url('tools.html')}): the same tools as a web page
+- [Tool reference](${url('tools')}): the same tools as a web page
 - [MCP server card](${url('.well-known/mcp/server-card.json')}): server info, transport, capabilities and tool list as JSON
 - [MCP Registry entry](${url('server.json')}): server.json for the official MCP Registry
 
 ## Analysis tools
 
-${analysis.map((t) => `- [${t.name}](${url(`tools.html#${t.name}`)}): ${blurb(t)}`).join('\n')}
+${analysis.map((t) => `- [${t.name}](${url(`tools#${t.name}`)}): ${blurb(t)}`).join('\n')}
 
 ## Market feeds
 
-${feeds.map((t) => `- [${t.name}](${url(`tools.html#${t.name}`)}): ${blurb(t)}`).join('\n')}
+${feeds.map((t) => `- [${t.name}](${url(`tools#${t.name}`)}): ${blurb(t)}`).join('\n')}
 
 ## Install
 
@@ -1081,7 +1081,7 @@ const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
     </video:video>
   </url>
   <url>
-    <loc>${url('tools.html')}</loc>
+    <loc>${url('tools')}</loc>
     <lastmod>${BUILD_DATE}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -1102,7 +1102,7 @@ const serverCard = {
   instructions: live.instructions,
   publisher: { name: 'Sperax', url: SOCIALS.website, contact: iface.supportURL },
   websiteUrl: SITE_URL,
-  documentationUrl: url('tools.html'),
+  documentationUrl: url('tools'),
   repositoryUrl: REPO_URL,
   iconUrl: url('icon-512.png'),
   distribution: { chatgpt: STORE_URL, mcpRegistry: url('server.json') },
@@ -1216,6 +1216,26 @@ write('.well-known/mcp/server-card.json', `${json(serverCard)}\n`);
 write('.well-known/mcp.json', `${json(wellKnownMcp)}\n`);
 write('.well-known/security.txt', securityTxt);
 write('.nojekyll', '');
+write(
+  '_headers',
+  `/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+/.well-known/*
+  Access-Control-Allow-Origin: *
+/llms.txt
+  Access-Control-Allow-Origin: *
+/llms-full.txt
+  Access-Control-Allow-Origin: *
+/server.json
+  Access-Control-Allow-Origin: *
+/fonts/*
+  Cache-Control: public, max-age=2592000
+/media/*
+  Cache-Control: public, max-age=2592000
+`,
+);
 
 copyFileSync(path.join(ROOT, 'site/styles.css'), path.join(OUT, 'styles.css'));
 copyFileSync(path.join(ROOT, 'site/app.js'), path.join(OUT, 'app.js'));

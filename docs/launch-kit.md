@@ -2,7 +2,7 @@
 
 Copy for announcing Sperax Trading Desk, plus the MCP directories to list it in. Every number
 here matches the live endpoint as of 2.0.0 (2026-11-17). Re-check the tool count on the
-[tool reference](https://nirholas.github.io/chatgpt-plugin/tools.html) before reusing this copy
+[tool reference](https://sperax-trading-desk.pages.dev/tools) before reusing this copy
 for a later version.
 
 ## Facts and links
@@ -12,7 +12,7 @@ for a later version.
 | Name | Sperax Trading Desk |
 | One line | Free, read-only crypto trade analysis for ChatGPT and any MCP client |
 | ChatGPT listing | <https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c> |
-| Website | <https://nirholas.github.io/chatgpt-plugin/> |
+| Website | <https://sperax-trading-desk.pages.dev/> |
 | Code | <https://github.com/nirholas/chatgpt-plugin> |
 | MCP endpoint | `https://chat.sperax.io/webapi/mcp/trading-copilot` (streamable HTTP, no key) |
 | Tools | 43, all read-only: 8 analysis tools and 35 live market feeds, plus 4 guided skills |
@@ -67,7 +67,7 @@ first post reaches as many people as possible.
 > Microsoft.
 >
 > Add it to ChatGPT: https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c
-> Setup for every client: https://nirholas.github.io/chatgpt-plugin/
+> Setup for every client: https://sperax-trading-desk.pages.dev/
 
 ## LinkedIn
 
@@ -132,7 +132,7 @@ no API key
 > `claude mcp add --transport http sperax-trading-desk https://chat.sperax.io/webapi/mcp/trading-copilot`
 >
 > Setup for Cursor, VS Code, Windsurf, Gemini CLI and Codex, plus every tool's parameters:
-> https://nirholas.github.io/chatgpt-plugin/
+> https://sperax-trading-desk.pages.dev/
 >
 > The package, validator and site generator are Apache-2.0:
 > https://github.com/nirholas/chatgpt-plugin

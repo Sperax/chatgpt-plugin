@@ -4,7 +4,7 @@
   "title": "Sperax Trading Desk",
   "description": "Read-only crypto trade analysis: positioning, sizing, backtests, token scans and 35 market feeds",
   "version": "2.0.0",
-  "websiteUrl": "https://nirholas.github.io/chatgpt-plugin/",
+  "websiteUrl": "https://sperax-trading-desk.pages.dev/",
   "repository": {
     "url": "https://github.com/nirholas/chatgpt-plugin",
     "source": "github"
@@ -17,7 +17,7 @@
   ],
   "icons": [
     {
-      "src": "https://nirholas.github.io/chatgpt-plugin/icon-512.png",
+      "src": "https://sperax-trading-desk.pages.dev/icon-512.png",
       "mimeType": "image/png",
       "sizes": ["512x512"]
     }

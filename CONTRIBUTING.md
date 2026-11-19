@@ -1,7 +1,7 @@
 # Contributing
 
 This repository holds the ChatGPT plugin package for Sperax Trading Desk, the scripts that validate
-and package it, the launch video source and the GitHub Pages site. The MCP server itself runs in
+and package it, the launch video source and the website (Cloudflare Pages). The MCP server itself runs in
 SperaxOS and is not part of this repository.
 
 ## Ways to help

@@ -1,10 +1,10 @@
 # Sperax Trading Desk — ChatGPT plugin
 
 [![ChatGPT plugin](https://img.shields.io/badge/ChatGPT-plugin_directory-10a37f?logo=openai&logoColor=white)](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c)
-[![MCP endpoint](https://img.shields.io/badge/MCP-streamable_HTTP-6d28d9)](https://nirholas.github.io/chatgpt-plugin/#install)
-[![Tools](https://img.shields.io/badge/tools-43_read--only-0f766e)](https://nirholas.github.io/chatgpt-plugin/tools.html)
+[![MCP endpoint](https://img.shields.io/badge/MCP-streamable_HTTP-6d28d9)](https://sperax-trading-desk.pages.dev/#install)
+[![Tools](https://img.shields.io/badge/tools-43_read--only-0f766e)](https://sperax-trading-desk.pages.dev/tools)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
-[![Website](https://img.shields.io/badge/website-nirholas.github.io-0f766e)](https://nirholas.github.io/chatgpt-plugin/)
+[![Website](https://img.shields.io/badge/website-sperax--trading--desk.pages.dev-0f766e)](https://sperax-trading-desk.pages.dev/)
 
 Official Sperax Trading Desk plugin for ChatGPT, live in the
 [ChatGPT plugin directory](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c).
@@ -20,12 +20,12 @@ build transactions or sign anything, and needs no sign-in.
 | Listing | [Sperax Trading Desk](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c) · developer Sperax · category Finance |
 | Version | 2.0.0, live since 2026-11-17 |
 | MCP endpoint | `https://chat.sperax.io/webapi/mcp/trading-copilot` (streamable HTTP, no auth) |
-| Website | [nirholas.github.io/chatgpt-plugin](https://nirholas.github.io/chatgpt-plugin/) · <https://www.sperax.io> · <https://chat.sperax.io> |
-| Tool reference | [All 43 tools with every parameter](https://nirholas.github.io/chatgpt-plugin/tools.html) |
+| Website | [sperax-trading-desk.pages.dev](https://sperax-trading-desk.pages.dev/) · <https://www.sperax.io> · <https://chat.sperax.io> |
+| Tool reference | [All 43 tools with every parameter](https://sperax-trading-desk.pages.dev/tools) |
 | Support | <https://chat.sperax.io/support> |
 | Legal | [Terms](https://chat.sperax.io/terms) · [Privacy](https://chat.sperax.io/privacy) |
 
-[![Sperax Trading Desk: crypto trade analysis for ChatGPT and any MCP client](.github/social-preview.png)](https://nirholas.github.io/chatgpt-plugin/)
+[![Sperax Trading Desk: crypto trade analysis for ChatGPT and any MCP client](.github/social-preview.png)](https://sperax-trading-desk.pages.dev/)
 
 [Watch the 43-second launch video](launch-video/sperax-trading-desk-chatgpt.mp4)
 
@@ -227,7 +227,7 @@ Client setup is in [Use it in other MCP clients](#use-it-in-other-mcp-clients).
 │   └── assets/                 # logo and composer icon, light and dark
 ├── scripts/
 │   ├── build.mjs               # validator and packager
-│   ├── site.mjs                # GitHub Pages site generator
+│   ├── site.mjs                # website generator
 │   └── lib/                    # shared MCP client
 ├── site/                       # Pages stylesheet and copy-button script
 ├── server.json                 # MCP Registry server description
@@ -252,7 +252,7 @@ npm ci
 npm run check        # validate the package and the live tool contract
 npm run build        # validate, then write dist/sperax-trading-copilot-<version>.zip
 npm run update-lock  # accept the live tool contract into tool-metadata.lock.json
-npm run site         # build the GitHub Pages site into _site/
+npm run site         # build the website into _site/
 ```
 
 `scripts/build.mjs` checks the manifest, skills and assets against every limit in OpenAI's
@@ -274,17 +274,21 @@ MCP_URL=https://staging.example.com/webapi/mcp/trading-copilot npm run check
 
 ### Website
 
-`scripts/site.mjs` builds [nirholas.github.io/chatgpt-plugin](https://nirholas.github.io/chatgpt-plugin/) from the live endpoint: the landing page with
+`scripts/site.mjs` builds [sperax-trading-desk.pages.dev](https://sperax-trading-desk.pages.dev/) from the live endpoint: the landing page with
 install steps for every client, a reference page for all 43 tools generated from their input
 schemas, schema.org structured data, Open Graph and X cards, `sitemap.xml`, `robots.txt`, a web
-manifest, [`llms.txt`](https://nirholas.github.io/chatgpt-plugin/llms.txt) and [`llms-full.txt`](https://nirholas.github.io/chatgpt-plugin/llms-full.txt) for AI
+manifest, [`llms.txt`](https://sperax-trading-desk.pages.dev/llms.txt) and [`llms-full.txt`](https://sperax-trading-desk.pages.dev/llms-full.txt) for AI
 assistants, `server.json`, and an MCP server card at
-[`.well-known/mcp/server-card.json`](https://nirholas.github.io/chatgpt-plugin/.well-known/mcp/server-card.json). The social card
+[`.well-known/mcp/server-card.json`](https://sperax-trading-desk.pages.dev/.well-known/mcp/server-card.json). The social card
 and icons are rendered with Playwright Chromium (run `npx playwright install chromium` once).
 `--social-preview` also writes `.github/social-preview.png`.
 
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml) rebuilds and deploys the site on
-every push to `main`, weekly, and on demand. A failed build leaves the last deployment live.
+The site is hosted on Cloudflare Pages (project `sperax-trading-desk`). `npm run deploy` rebuilds
+it from the live endpoint and uploads `_site/` with Wrangler. It reads `CLOUDFLARE_API_TOKEN`
+(a token with Cloudflare Pages: Edit) and `CLOUDFLARE_ACCOUNT_ID` from the environment. The build
+also writes `_headers`, which opens CORS on the discovery files and sets cache headers.
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes the same build as a
+mirror on GitHub Pages; its canonical links point at Cloudflare.
 
 ### Packaging
 
