@@ -1,0 +1,58 @@
+# Builds the GitHub Pages site from the live MCP endpoint and deploys it.
+# Runs on every push to main, on demand, and weekly so the tool reference tracks the server.
+# A failed build (for example, the endpoint is unreachable) leaves the last good deployment live.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Chromium for the social card render
+        run: npx playwright install --with-deps chromium
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build site
+        run: node scripts/site.mjs
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
