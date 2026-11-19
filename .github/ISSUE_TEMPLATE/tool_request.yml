@@ -1,0 +1,21 @@
+name: Tool or data feed request
+description: Suggest a new read-only tool, data feed or skill.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: The question it answers
+      description: What a trader would ask, for example "Is funding on SOL unusually high versus its 30-day range?"
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data source
+      description: Where the data could come from, if you know.
+  - type: textarea
+    id: today
+    attributes:
+      label: How you answer it today
+      description: The tools, sites or steps you use now.

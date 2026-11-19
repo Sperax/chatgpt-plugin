@@ -1,0 +1,45 @@
+name: Bug report
+description: A tool returns wrong data or errors, an install snippet fails, or the site is broken.
+labels: [bug]
+body:
+  - type: dropdown
+    id: client
+    attributes:
+      label: Client
+      options:
+        - ChatGPT
+        - Claude Code
+        - Claude Desktop
+        - Cursor
+        - VS Code
+        - Windsurf
+        - Gemini CLI
+        - Codex CLI
+        - Raw JSON-RPC
+        - Website
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: tool
+    attributes:
+      label: Tool
+      description: The tool name, for example get_derivatives_positioning. Leave blank if it is not about one tool.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The prompt or request you sent, what you got back and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: response
+    attributes:
+      label: Error or response
+      description: Paste the error message or the relevant part of the response.
+      render: text
+  - type: input
+    id: when
+    attributes:
+      label: When
+      description: Date and time with timezone, so we can find it in the server logs.
