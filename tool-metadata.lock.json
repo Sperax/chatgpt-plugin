@@ -1,0 +1,312 @@
+[
+  {
+    "inputProperties": [
+      "symbol"
+    ],
+    "name": "get_derivatives_positioning",
+    "required": [
+      "symbol"
+    ]
+  },
+  {
+    "inputProperties": [
+      "accountSize",
+      "entry",
+      "feePct",
+      "leverage",
+      "maintenanceMarginPct",
+      "riskPct",
+      "side",
+      "stop",
+      "targets",
+      "winProbability"
+    ],
+    "name": "build_trade_plan",
+    "required": [
+      "accountSize",
+      "entry",
+      "side",
+      "stop"
+    ]
+  },
+  {
+    "inputProperties": [
+      "coins",
+      "costs",
+      "days",
+      "initialCapital",
+      "rebalanceFrequency",
+      "strategy"
+    ],
+    "name": "backtest_signal_strategy",
+    "required": [
+      "coins",
+      "strategy"
+    ]
+  },
+  {
+    "inputProperties": [
+      "chain",
+      "token"
+    ],
+    "name": "scan_token",
+    "required": [
+      "token"
+    ]
+  },
+  {
+    "inputProperties": [
+      "amountUsd",
+      "buyToken",
+      "chain",
+      "sellAmount",
+      "sellChain",
+      "sellToken",
+      "slippagePct"
+    ],
+    "name": "compare_swap_quotes",
+    "required": [
+      "buyToken"
+    ]
+  },
+  {
+    "inputProperties": [
+      "address",
+      "includeStress"
+    ],
+    "name": "review_wallet",
+    "required": [
+      "address"
+    ]
+  },
+  {
+    "inputProperties": [
+      "holdings",
+      "includeRisk",
+      "scenarioIds"
+    ],
+    "name": "stress_test_portfolio",
+    "required": [
+      "holdings"
+    ]
+  },
+  {
+    "inputProperties": [
+      "interval",
+      "symbol"
+    ],
+    "name": "analyze_coin",
+    "required": [
+      "symbol"
+    ]
+  },
+  {
+    "inputProperties": [
+      "days"
+    ],
+    "name": "get_fear_greed_index",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_market_regime",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_macro_dashboard",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "symbol"
+    ],
+    "name": "get_traditional_market_chart",
+    "required": [
+      "symbol"
+    ]
+  },
+  {
+    "inputProperties": [
+      "symbols"
+    ],
+    "name": "get_crypto_stock_quotes",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_market_intelligence",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_market_sentiment",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_global_market_stats",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "limit",
+      "sort"
+    ],
+    "name": "get_top_coins",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_trending_coins",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_whale_alerts",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_exchange_flows",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "chain",
+      "wallets"
+    ],
+    "name": "get_tracked_wallet_activity",
+    "required": [
+      "wallets"
+    ]
+  },
+  {
+    "inputProperties": [],
+    "name": "get_gas_prices",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_bitcoin_network_stats",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "chain",
+      "limit"
+    ],
+    "name": "get_new_dex_listings",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_funding_rates",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_open_interest",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_liquidations",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_long_short_ratios",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_options_overview",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_etf_flows",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_dex_volumes",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_defi_overview",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_chain_tvl",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "limit"
+    ],
+    "name": "get_top_defi_protocols",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_protocol_revenue",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "limit"
+    ],
+    "name": "get_defi_yields",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_stablecoin_stats",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_bridge_flows",
+    "required": []
+  },
+  {
+    "inputProperties": [],
+    "name": "get_token_unlocks",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "limit"
+    ],
+    "name": "get_governance_proposals",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "chain",
+      "limit"
+    ],
+    "name": "get_onchain_ai_agents",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "category",
+      "limit",
+      "symbol"
+    ],
+    "name": "get_crypto_news",
+    "required": []
+  },
+  {
+    "inputProperties": [
+      "wallet"
+    ],
+    "name": "get_sperax_protocol_stats",
+    "required": []
+  }
+]
