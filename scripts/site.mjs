@@ -153,7 +153,7 @@ const INSTALL = [
   {
     id: 'chatgpt',
     name: 'ChatGPT',
-    note: 'Open the listing in the ChatGPT plugin directory and add it. No sign-in or API key.',
+    note: 'Open the listing in the ChatGPT plugin directory and add it.',
     actions: [{ href: STORE_URL, label: 'Add to ChatGPT', primary: true }],
   },
   {
@@ -231,6 +231,72 @@ const ORG = {
   url: SOCIALS.website,
 };
 
+// ---------------------------------------------------------------------------------------------
+// Tool metadata, shared by index.html and tools.html
+
+const typeOf = (schema = {}) => {
+  if (schema.enum) return schema.enum.map((v) => JSON.stringify(v)).join(' | ');
+  const types = [schema.type].flat().filter(Boolean);
+  if (schema.anyOf || schema.oneOf) return (schema.anyOf ?? schema.oneOf).map(typeOf).join(' | ');
+  return types
+    .map((t) => (t === 'array' && schema.items ? `array of ${schema.items.properties ? 'objects' : typeOf(schema.items)}` : t))
+    .join(' | ');
+};
+
+const constraintsOf = (schema = {}) => {
+  const c = [];
+  if (schema.default !== undefined) c.push(`default ${JSON.stringify(schema.default)}`);
+  if (schema.minimum !== undefined) c.push(`≥ ${schema.minimum}`);
+  if (schema.exclusiveMinimum !== undefined) c.push(`> ${schema.exclusiveMinimum}`);
+  if (schema.maximum !== undefined) c.push(`≤ ${schema.maximum}`);
+  if (schema.exclusiveMaximum !== undefined) c.push(`< ${schema.exclusiveMaximum}`);
+  if (schema.minLength !== undefined) c.push(`min length ${schema.minLength}`);
+  if (schema.maxLength !== undefined) c.push(`max length ${schema.maxLength}`);
+  if (schema.minItems !== undefined) c.push(`min ${schema.minItems} item${schema.minItems === 1 ? '' : 's'}`);
+  if (schema.maxItems !== undefined) c.push(`max ${schema.maxItems} item${schema.maxItems === 1 ? '' : 's'}`);
+  if (schema.items?.enum) c.push(`items: ${schema.items.enum.map((v) => JSON.stringify(v)).join(', ')}`);
+  if (schema.pattern) c.push(`pattern ${schema.pattern}`);
+  if (schema.format) c.push(`format ${schema.format}`);
+  return c;
+};
+
+/** Flattens an input schema into rows, expanding array-of-object items as name[].field. */
+const paramRows = (schema, prefix = '') => {
+  const required = new Set(schema?.required ?? []);
+  return Object.entries(schema?.properties ?? {}).flatMap(([name, prop]) => {
+    const row = { constraints: constraintsOf(prop), description: prop.description ?? '', name: `${prefix}${name}`, required: required.has(name), type: typeOf(prop) };
+    const nested = prop.items?.properties ? paramRows(prop.items, `${prefix}${name}[].`) : [];
+    return [row, ...nested];
+  });
+};
+
+const toolTags = (t) => {
+  const a = t.annotations ?? {};
+  const tags = [];
+  if (a.readOnlyHint) tags.push(['Read-only', true]);
+  if (a.destructiveHint === false) tags.push(['Non-destructive', true]);
+  if (a.idempotentHint) tags.push(['Idempotent', false]);
+  tags.push([a.openWorldHint ? 'Live external data' : 'Computed locally', false]);
+  if (t._meta?.['openai/outputTemplate']) tags.push(['Interactive card in ChatGPT', false]);
+  return tags;
+};
+
+// ---------------------------------------------------------------------------------------------
+// Page chrome
+
+const PAPER = '#F1EEEA';
+
+const svg = (body, size = 16, viewBox = '0 0 16 16') =>
+  `<svg class="ic" viewBox="${viewBox}" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+const ARROW_UR = svg('<path d="M5 11 11 5M6.5 5H11v4.5"/>');
+const ARROW_DOWN = svg('<path d="M8 3v10M4 9l4 4 4-4"/>');
+const ARROW_RIGHT = svg('<path d="M3 8h10M9 4l4 4-4 4"/>');
+const CHECK = svg('<path d="m3.5 8.5 3 3 6-7"/>');
+
+/** Button with a trailing icon. Variants: lime, ink, white, ghost, outline-light. */
+const btn = (href, label, variant = 'lime', icon = ARROW_UR, size = '') =>
+  `<a class="btn btn-${variant}${size ? ` btn-${size}` : ''}" href="${esc(href)}"><span>${esc(label)}</span>${icon}</a>`;
+
 const head = ({ description = META_DESCRIPTION, jsonLd = [], page = '', title = TITLE }) => `<!doctype html>
 <html lang="en">
 <head>
@@ -241,7 +307,7 @@ const head = ({ description = META_DESCRIPTION, jsonLd = [], page = '', title = 
 <meta name="keywords" content="ChatGPT plugin, MCP server, crypto trading, derivatives, funding rates, position sizing, backtesting, token safety, honeypot scanner, DeFi, Bitcoin, Ethereum, Solana, Sperax">
 <meta name="author" content="Sperax">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="${esc(iface.brandColor)}">
+<meta name="theme-color" content="${PAPER}">
 <link rel="canonical" href="${url(page)}">
 <link rel="icon" href="${url('favicon.svg')}" type="image/svg+xml">
 <link rel="icon" href="${url('favicon-32.png')}" sizes="32x32" type="image/png">
@@ -249,7 +315,7 @@ const head = ({ description = META_DESCRIPTION, jsonLd = [], page = '', title = 
 <link rel="manifest" href="${url('site.webmanifest')}">
 <link rel="alternate" type="text/plain" title="llms.txt" href="${url('llms.txt')}">
 <link rel="alternate" type="application/json" title="MCP server card" href="${url('.well-known/mcp/server-card.json')}">
-<link rel="preload" href="${url('fonts/Inter.woff2')}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${url('fonts/DMSans.woff2')}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${url('styles.css')}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Sperax Trading Desk">
@@ -276,43 +342,35 @@ ${jsonLd.map(ldScript).join('\n')}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav">
-  <div class="wrap">
-    <a class="brand" href="${url()}"><img src="${url('favicon.svg')}" alt="" width="28" height="28">Sperax Trading Desk</a>
+  <div class="wrap nav-inner">
+    <a class="brand" href="${url()}"><img src="${url('favicon.svg')}" alt="" width="26" height="26"><span>Sperax Trading Desk</span></a>
     <nav class="nav-links" aria-label="Main">
       <a href="${url('#tools')}">Tools</a>
       <a href="${url('#install')}">Install</a>
       <a href="${url('tools.html')}">Reference</a>
       <a href="${url('#faq')}">FAQ</a>
       <a href="${REPO_URL}">GitHub</a>
-      <a class="btn btn-primary btn-sm" href="${STORE_URL}">Add to ChatGPT</a>
     </nav>
+    ${btn(STORE_URL, 'Add to ChatGPT', 'lime', ARROW_UR, 'sm')}
   </div>
 </header>
 `;
 
-const footer = () => `<footer>
+const footerNav = (label, links) => `<nav aria-label="${esc(label)}"><p class="tiny">${esc(label)}</p>${links.map(([href, text]) => `<a href="${esc(href)}">${esc(text)}</a>`).join('')}</nav>`;
+
+const footer = () => `<footer class="footer">
   <div class="wrap">
-    <div class="cols">
-      <p><strong>Sperax Trading Desk</strong> ${esc(plugin.version)} · read-only crypto analysis for ChatGPT and MCP clients.</p>
-      <nav aria-label="Footer">
-        <a href="${STORE_URL}">ChatGPT listing</a>
-        <a href="${url('tools.html')}">Tool reference</a>
-        <a href="${url('llms.txt')}">llms.txt</a>
-        <a href="${url('.well-known/mcp/server-card.json')}">MCP server card</a>
-        <a href="${REPO_URL}">Source</a>
-        <a href="${esc(iface.supportURL)}">Support</a>
-        <a href="${esc(iface.privacyPolicyURL)}">Privacy</a>
-        <a href="${esc(iface.termsOfServiceURL)}">Terms</a>
-        <a href="${REPO_URL}/security/policy">Security</a>
-      </nav>
-      <nav aria-label="Sperax">
-        <a href="${SOCIALS.website}">sperax.io</a>
-        <a href="${SOCIALS.x}">X</a>
-        <a href="${SOCIALS.telegram}">Telegram</a>
-        <a href="${SOCIALS.github}">GitHub</a>
-      </nav>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="${url()}"><img src="${url('favicon.svg')}" alt="" width="26" height="26"><span>Sperax Trading Desk</span></a>
+        <p>Read-only crypto analysis for ChatGPT and any MCP client. Version ${esc(plugin.version)}.</p>
+      </div>
+      ${footerNav('Product', [[STORE_URL, 'ChatGPT listing'], [url('tools.html'), 'Tool reference'], [url('#install'), 'Install'], [url('#faq'), 'FAQ']])}
+      ${footerNav('For agents', [[url('llms.txt'), 'llms.txt'], [url('llms-full.txt'), 'llms-full.txt'], [url('.well-known/mcp/server-card.json'), 'MCP server card'], [url('server.json'), 'server.json']])}
+      ${footerNav('Project', [[REPO_URL, 'Source'], [`${REPO_URL}/security/policy`, 'Security'], [iface.supportURL, 'Support'], [iface.privacyPolicyURL, 'Privacy'], [iface.termsOfServiceURL, 'Terms']])}
+      ${footerNav('Sperax', [[SOCIALS.website, 'sperax.io'], [SOCIALS.x, 'X'], [SOCIALS.telegram, 'Telegram'], [SOCIALS.github, 'GitHub']])}
     </div>
-    <p>© ${YEAR} Sperax. Code licensed under Apache-2.0. Sperax and the Sperax logo are trademarks of Sperax. ChatGPT is a trademark of OpenAI. Nothing on this site or returned by the tools is financial advice.</p>
+    <p class="fine">© ${YEAR} Sperax. Code licensed under Apache-2.0. Sperax and the Sperax logo are trademarks of Sperax. ChatGPT is a trademark of OpenAI. Nothing on this site or returned by the tools is financial advice.</p>
   </div>
 </footer>
 </body>
@@ -326,48 +384,91 @@ const codeBlock = (code, label) =>
   `<div class="code"><pre><code>${esc(code)}</code></pre><button class="copy" type="button" aria-label="Copy ${esc(label)}">Copy</button></div>`;
 
 const toolLink = (name) => `<a class="tool-name" href="${url(`tools.html#${name}`)}">${esc(name)}</a>`;
+const requiredOf = (t) => t.inputSchema?.required ?? [];
+const hasCard = (t) => Boolean(t._meta?.['openai/outputTemplate']);
+const countTools = (test) => tools.filter(test).length;
 
-const promptCards = [
+const PROMPTS = [
   ...iface.defaultPrompt.map((q, i) => ({ q, tools: DEFAULT_PROMPT_TOOLS[i] ?? [] })),
   ...EXTRA_PROMPTS,
-]
+];
+// The worked example in the flow panel: the prompt that chains the most tools.
+const FLOW_PROMPT = PROMPTS.reduce((best, p) => (p.tools.length > best.tools.length ? p : best));
+const flowTags = [...new Map(FLOW_PROMPT.tools.flatMap((n) => toolTags(toolByName.get(n)))).keys()];
+
+const promptCards = PROMPTS.filter((p) => p !== FLOW_PROMPT).map(
+  (p) => `<li><q>${esc(p.q)}</q><span class="chips">${p.tools.map(toolLink).join('')}</span></li>`,
+).join('\n');
+
+const icon = (body) => svg(body, 22, '0 0 24 24');
+const HERO_TOOLS = [
+  ['analyze_coin', icon('<path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/>')],
+  ['build_trade_plan', icon('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/>')],
+  ['backtest_signal_strategy', icon('<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3 3.5V8h4.5"/><path d="M12 7.5V12l3 2"/>')],
+  ['scan_token', icon('<path d="M12 2.5 19.5 5.5v6c0 4.6-3.1 7.9-7.5 9.5-4.4-1.6-7.5-4.9-7.5-9.5v-6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>')],
+];
+
+const heroCards = HERO_TOOLS.map(([name, glyph], i) => {
+  const t = toolByName.get(name);
+  const required = requiredOf(t);
+  return `<li class="fcard">
+  <a href="${url(`tools.html#${t.name}`)}">
+    <div class="fcard-head"><span class="tile tile-${i + 1}">${glyph}</span><div><h3>${esc(t.title)}</h3><code>${esc(t.name)}</code></div></div>
+    <p class="fcard-desc">${esc(blurb(t))}</p>
+    <div class="kv"><span class="tiny">Required ${required.length === 1 ? 'input' : 'inputs'}</span><strong>${required.length ? esc(required.join(' · ')) : 'None'}</strong></div>
+    <div class="fcard-foot"><span>${hasCard(t) ? 'Interactive card in ChatGPT' : 'Analysis'}</span><span class="view">Reference${ARROW_UR}</span></div>
+  </a>
+</li>`;
+}).join('\n');
+
+const analysisList = analysis
   .map(
-    (p) => `<li class="card prompt"><q>${esc(p.q)}</q><span>${p.tools.map(toolLink).join(' ')}</span></li>`,
+    (t) => `<li><a href="${url(`tools.html#${t.name}`)}"><span class="tl-title">${esc(t.title)}${ARROW_UR}</span><span class="tl-desc">${esc(blurb(t))}</span><code>${esc(t.name)}</code></a></li>`,
   )
   .join('\n');
 
-const analysisCards = analysis
+const feedList = feeds
+  .map((t) => `<li><a href="${url(`tools.html#${t.name}`)}" title="${esc(blurb(t))}"><span>${esc(t.title.replace(/^Get /, ''))}</span>${ARROW_UR}</a></li>`)
+  .join('\n');
+
+const skillList = skills
   .map(
-    (t) => `<a class="card" href="${url(`tools.html#${t.name}`)}">
-  <h3>${esc(t.title)}</h3>
-  <p>${esc(blurb(t))}</p>
-  <span class="tool-name">${esc(t.name)}</span>
-</a>`,
+    (s) => `<li><a href="${REPO_URL}/blob/main/sperax-trading-copilot/skills/${s.name}/SKILL.md"><strong>${esc(s.name)}</strong><span>${esc(sentences(s.description)[0])}</span></a></li>`,
   )
   .join('\n');
 
-const feedChips = feeds
-  .map((t) => `<li><a href="${url(`tools.html#${t.name}`)}" title="${esc(blurb(t))}">${esc(t.title.replace(/^Get /, ''))}</a></li>`)
-  .join('\n');
+const AGENT_FILES = [
+  [url('llms.txt'), 'llms.txt', 'Plain-text summary for language models.'],
+  [url('llms-full.txt'), 'llms-full.txt', 'Every tool with its full description and parameters.'],
+  [url('.well-known/mcp/server-card.json'), 'server-card.json', 'MCP server card with transport and capabilities.'],
+  [url('server.json'), 'server.json', `MCP registry entry, published as ${serverJson.name}.`],
+];
 
-const skillCards = skills
-  .map(
-    (s) => `<a class="card" href="${REPO_URL}/blob/main/sperax-trading-copilot/skills/${s.name}/SKILL.md">
-  <h3>${esc(s.name)}</h3>
-  <p>${esc(sentences(s.description)[0])}</p>
-  <span class="tool-name">skills/${esc(s.name)}</span>
-</a>`,
-  )
-  .join('\n');
+const INSTALL_POINTS = {
+  chatgpt: [
+    `${plural(tools.length, 'tool')}, all read-only`,
+    `Interactive cards from ${plural(countTools(hasCard), 'tool')}`,
+    'No sign-in, no API key',
+    `Live server ${esc(live.serverInfo?.version)}, MCP ${esc(live.protocolVersion)}`,
+  ],
+};
 
 const installBlocks = INSTALL.map(
-  (c) => `<div class="card install" id="install-${c.id}">
+  (c) => `<div class="icard" id="install-${c.id}">
   <h3>${esc(c.name)}</h3>
   <p>${esc(c.note)}</p>
+  ${INSTALL_POINTS[c.id] ? `<ul class="checks">${INSTALL_POINTS[c.id].map((pt) => `<li>${CHECK}<span>${pt}</span></li>`).join('')}</ul>` : ''}
   ${c.code ? codeBlock(c.code, `${c.name} setup`) : ''}
-  ${c.actions ? `<div class="actions">${c.actions.map((a) => `<a class="btn ${a.primary ? 'btn-primary' : 'btn-ghost'} btn-sm" href="${esc(a.href)}">${esc(a.label)}</a>`).join('')}</div>` : ''}
+  ${c.actions ? `<div class="actions">${c.actions.map((a) => btn(a.href, a.label, a.primary ? 'lime' : 'ghost', ARROW_UR, 'sm')).join('')}</div>` : ''}
 </div>`,
 ).join('\n');
+
+const ANNOTATIONS = [
+  ['readOnlyHint: true', countTools((t) => t.annotations?.readOnlyHint === true)],
+  ['destructiveHint: false', countTools((t) => t.annotations?.destructiveHint === false)],
+  ['openWorldHint: true', countTools((t) => t.annotations?.openWorldHint === true)],
+  ['openai/outputTemplate', countTools(hasCard)],
+];
 
 const indexLd = [
   {
@@ -421,135 +522,292 @@ const indexLd = [
   },
 ];
 
+const DOT = '<span class="dot">.</span>';
+const SERVER_LINE = `Server ${esc(live.serverInfo?.version)} · MCP ${esc(live.protocolVersion)}`;
+const segment = (n) => `style="flex-grow:${n}"`;
+const CATALOG = [
+  ['Analysis tools', analysis.length, 'seg-1'],
+  ['Market feeds', feeds.length, 'seg-2'],
+  ['Skills', skills.length, 'seg-3'],
+];
+
 const indexHtml = `${head({ jsonLd: indexLd })}<main id="main">
 <section class="hero">
   <div class="wrap">
-    <a class="pill" href="${STORE_URL}"><span class="dot" aria-hidden="true"></span>Live in the ChatGPT plugin directory</a>
-    <h1>Check the trade <span class="grad">before you take it.</span></h1>
-    <p class="lead">${esc(leadParagraph)} Works in ChatGPT and any MCP client. Free, read-only, no sign-in.</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="${STORE_URL}">Add to ChatGPT</a>
-      <a class="btn btn-ghost" href="#install">Use with Claude, Cursor or VS Code</a>
-      <a class="btn btn-ghost" href="${REPO_URL}">View source</a>
+    <div class="hero-panel">
+      <div class="hero-copy">
+        <p class="hero-intro"><a href="${STORE_URL}">Live in the ChatGPT plugin directory</a></p>
+        <h1>Check the trade before you take it${DOT}</h1>
+        <p class="lead">${esc(leadParagraph)} Works in ChatGPT and any MCP client. Free, read-only, no sign-in.</p>
+        <div class="cta">
+          ${btn(STORE_URL, 'Add to ChatGPT')}
+          ${btn('#install', 'Install in any MCP client', 'white', ARROW_DOWN)}
+        </div>
+      </div>
+      <div class="hero-media">
+        <video controls playsinline preload="none" poster="${url('og-image.png')}" width="1920" height="1080">
+          <source src="${url(`media/${VIDEO_FILE}`)}" type="video/mp4">
+          <a href="${url(`media/${VIDEO_FILE}`)}">Watch the ${VIDEO_SECONDS}-second launch video</a>
+        </video>
+        <p class="tiny">Launch video · ${VIDEO_SECONDS} seconds</p>
+      </div>
     </div>
-    <ul class="stats">
-      <li><strong>${tools.length}</strong><span>read-only tools</span></li>
-      <li><strong>${analysis.length}</strong><span>analysis tools</span></li>
-      <li><strong>${feeds.length}</strong><span>live market feeds</span></li>
-      <li><strong>0</strong><span>sign-ins or API keys</span></li>
+    <ul class="fcards">
+${heroCards}
     </ul>
   </div>
 </section>
 
-<section aria-label="Launch video">
+<section id="prompts" class="section">
   <div class="wrap">
-    <div class="video">
-    <video controls playsinline preload="none" poster="${url('og-image.png')}" width="1920" height="1080">
-      <source src="${url(`media/${VIDEO_FILE}`)}" type="video/mp4">
-      <a href="${url(`media/${VIDEO_FILE}`)}">Watch the ${VIDEO_SECONDS}-second launch video</a>
-    </video>
+    <div class="split-head">
+      <div>
+        <p class="eyebrow">For traders</p>
+        <h2>Your questions.<br>Live numbers to answer them.</h2>
+      </div>
+      <div class="split-aside">
+        <p>Ask in plain language. ChatGPT picks the tools and builds the answer from live market data, not guesses.</p>
+        ${btn(STORE_URL, 'Add to ChatGPT', 'ink')}
+      </div>
     </div>
-  </div>
-</section>
 
-<section id="prompts">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">Try it</p>
-      <h2>Ask in plain language</h2>
-      <p>ChatGPT picks the tools. Each answer is built from live numbers, not guesses.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="step-head"><span>Your question</span><span class="num">01</span></div>
+        <div class="step-ask">
+          <span class="tile tile-1">${HERO_TOOLS[0][1]}</span>
+          <q>${esc(FLOW_PROMPT.q)}</q>
+        </div>
+        <dl class="fields">
+          <div><dt>Client</dt><dd>ChatGPT or any MCP client</dd></div>
+          <div><dt>Sign-in</dt><dd>None</dd></div>
+        </dl>
+        <a class="step-link" href="${STORE_URL}">Ask it in ChatGPT${ARROW_UR}</a>
+      </div>
+      <span class="flow-arrow" aria-hidden="true">${ARROW_RIGHT}</span>
+      <div class="step">
+        <div class="step-head"><span>Tools called</span><span class="num">02</span></div>
+        <div class="step-band">
+          <div class="step-band-tools">${FLOW_PROMPT.tools.map((n) => `<code>${esc(n)}</code>`).join('')}</div>
+          ${ARROW_UR}
+          <p class="tiny">${plural(FLOW_PROMPT.tools.length, 'tool')} chained on one question</p>
+        </div>
+        <ol class="chain">
+${FLOW_PROMPT.tools
+  .map((n, i) => {
+    const t = toolByName.get(n);
+    const required = requiredOf(t);
+    return `          <li><span class="num">${String(i + 1).padStart(2, '0')}</span><div><strong>${esc(t.title)}</strong><span>${required.length ? `Needs ${esc(required.join(', '))}` : 'No required inputs'}</span></div></li>`;
+  })
+  .join('\n')}
+        </ol>
+        <div class="step-row"><span>Live endpoint</span><a href="${url('tools.html')}">${SERVER_LINE}${ARROW_UR}</a></div>
+        <p class="step-note">Streamable HTTP, no auth, 120 requests per minute per IP.</p>
+      </div>
+      <span class="flow-arrow" aria-hidden="true">${ARROW_RIGHT}</span>
+      <div class="step">
+        <div class="step-head"><span>What comes back</span><span class="num">03</span></div>
+        <ul class="checks">
+${flowTags.map((tag) => `          <li>${CHECK}<span>${esc(tag)}</span></li>`).join('\n')}
+        </ul>
+        <p class="step-note">No orders, no keys, no custody.</p>
+      </div>
     </div>
-    <ul class="grid">
+
+    <ol class="numbered">
+      <li><span class="num">01</span><div><h3>Ask in plain language.</h3><p>No commands to learn. ChatGPT reads the question and picks the right tools.</p></div></li>
+      <li><span class="num">02</span><div><h3>Live data on every call.</h3><p>${analysis.length} analysis tools and ${feeds.length} market feeds read public sources at the moment you ask.</p></div></li>
+      <li><span class="num">03</span><div><h3>Read the result, then decide.</h3><p>Sizing, liquidation distance, backtests and scans. The decision and the trade stay with you.</p></div></li>
+    </ol>
+
+    <div class="try">
+      <p class="eyebrow">Try asking</p>
+      <ul class="prompt-list">
 ${promptCards}
-    </ul>
+      </ul>
+    </div>
   </div>
 </section>
 
-<section id="tools">
+<section id="tools" class="section">
   <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">${plural(analysis.length, 'analysis tool')}</p>
-      <h2>Size, test and sanity-check</h2>
-      <p>Each tool does one job a trader would otherwise do by hand across five tabs.</p>
-    </div>
-    <div class="grid">
-${analysisCards}
-    </div>
-  </div>
-</section>
-
-<section id="feeds">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">${plural(feeds.length, 'market feed')}</p>
-      <h2>One tool per live data set</h2>
-      <p>Sentiment, macro, derivatives, on-chain flows, DeFi and news. Each takes only the parameters its feed uses.</p>
-    </div>
-    <ul class="chips">
-${feedChips}
-    </ul>
-  </div>
-</section>
-
-<section id="skills">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">${plural(skills.length, 'skill')}</p>
-      <h2>Guided flows</h2>
-      <p>Skills chain the tools into the checks traders run most.</p>
-    </div>
-    <div class="grid">
-${skillCards}
+    <div class="panel panel-tint split">
+      <div>
+        <p class="eyebrow">${plural(analysis.length, 'analysis tool')}</p>
+        <h2 class="h2-sm">Size, test and sanity-check the trade${DOT}</h2>
+        <p class="lead-sm">Each tool does one job a trader would otherwise do by hand across five tabs.</p>
+        <ul class="tool-list">
+${analysisList}
+        </ul>
+      </div>
+      <div class="catalog">
+        <div class="card">
+          <div class="card-head"><p class="eyebrow">Live catalog</p><a class="pill" href="${url('tools.html')}">Full reference</a></div>
+          <div class="card-id">
+            <img src="${url('icon-192.png')}" alt="" width="42" height="42">
+            <div><strong>Sperax Trading Desk</strong><span>${SERVER_LINE}</span></div>
+            <span class="live">${ARROW_UR}Live</span>
+          </div>
+          <div class="bar" role="img" aria-label="${analysis.length} analysis tools, ${feeds.length} market feeds, ${skills.length} skills">
+${CATALOG.map(([, n, cls]) => `            <span class="${cls}" ${segment(n)}></span>`).join('\n')}
+          </div>
+          <ul class="legend">
+${CATALOG.map(([label, n, cls]) => `            <li><span class="swatch ${cls}" aria-hidden="true"></span>${esc(label)}<strong>${n}</strong></li>`).join('\n')}
+          </ul>
+          <p class="tiny">Endpoint</p>
+          ${codeBlock(MCP_URL, 'MCP endpoint')}
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="safety">
+<section id="safety" class="section">
   <div class="wrap split">
-    <div class="section-head">
+    <div>
       <p class="eyebrow">Read-only by design</p>
-      <h2>What it will not do</h2>
-      <p>Every tool is annotated <code>readOnlyHint: true</code> and <code>destructiveHint: false</code>. Your keys, accounts and funds never touch it.</p>
+      <h2 class="h2-sm">What it will not do${DOT}</h2>
+      <p class="lead-sm">Your keys, accounts and funds never touch it. Every tool declares itself read-only to the client that calls it.</p>
+      ${btn(REPO_URL, 'Read the source', 'ink')}
+      <ul class="bold-list">
+${WILL_NOT.map(([t, d]) => `        <li><strong>${esc(t)}</strong> ${esc(d)}</li>`).join('\n')}
+      </ul>
     </div>
-    <ul class="guard">
-${WILL_NOT.map(([t, d]) => `      <li><span class="x" aria-hidden="true">×</span><span><strong>${esc(t)}</strong> ${esc(d)}</span></li>`).join('\n')}
+    <div class="frame frame-beige">
+      <div class="card card-flush">
+        <div class="band">
+          <span class="band-word">read-only</span>${ARROW_UR}
+          <p class="tiny">Every tool, every call.</p>
+        </div>
+        <div class="card-body">
+          <div class="card-title"><h3>Tool annotations</h3><span>${plural(tools.length, 'tool')}</span></div>
+          <p>Declared by the live server in <code>tools/list</code>. Clients read these hints before they call a tool.</p>
+          <ul class="pills"><li>MCP ${esc(live.protocolVersion)}</li><li>No auth</li><li>120 requests per minute per IP</li></ul>
+          <p class="eyebrow">What the server declares</p>
+          <ul class="ann">
+${ANNOTATIONS.map(([label, n]) => `            <li><code>${esc(label)}</code><span>${n} of ${tools.length}</span></li>`).join('\n')}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="behind">
+  <div class="wrap">
+    <h2 class="h2-sm" id="behind">See what's behind the answer${DOT}</h2>
+    <p class="lead-sm">The feeds, the guided flows and the files agents read. All of it is public.</p>
+    <div class="trio">
+      <article class="tcard">
+        <div class="tcard-media tint-green">
+          <div class="card">
+            <span class="tile tile-1">${HERO_TOOLS[0][1]}</span>
+            <h3 class="tcard-num">${feeds.length} feeds</h3>
+            <ul class="mini">
+${feeds.slice(0, 4).map((t) => `              <li><a href="${url(`tools.html#${t.name}`)}">${esc(t.title.replace(/^Get /, ''))}${ARROW_UR}</a></li>`).join('\n')}
+            </ul>
+          </div>
+          <p class="tiny">From the live catalog</p>
+        </div>
+        <h3>Live market feeds.</h3>
+        <p>Sentiment, macro, derivatives, on-chain flows, DeFi and news. Each feed takes only the parameters it uses. <a href="#feeds">See all ${feeds.length}</a>.</p>
+      </article>
+      <article class="tcard" id="skills">
+        <div class="tcard-media tint-beige">
+          <div class="card">
+            <p class="tiny">${plural(skills.length, 'skill')}</p>
+            <ul class="skill-list">
+${skillList}
+            </ul>
+          </div>
+          <p class="tiny">Guided flows</p>
+        </div>
+        <h3>Guided skills.</h3>
+        <p>Skills chain the tools into the checks traders run most. Each one is a readable file in the repository.</p>
+      </article>
+      <article class="tcard">
+        <div class="tcard-media tint-lime">
+          <div class="card">
+            <p class="tiny">For agents and crawlers</p>
+            <ul class="mini mini-desc">
+${AGENT_FILES.map(([href, name, desc]) => `              <li><a href="${esc(href)}"><strong>${esc(name)}</strong><span>${esc(desc)}</span></a></li>`).join('\n')}
+            </ul>
+          </div>
+          <p class="tiny">Machine-readable</p>
+        </div>
+        <h3>Readable by machines.</h3>
+        <p>llms.txt, an MCP server card and a registry entry, so assistants can find and describe the server correctly.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="feeds" class="section">
+  <div class="wrap">
+    <div class="split-head">
+      <div>
+        <p class="eyebrow">${plural(feeds.length, 'market feed')}</p>
+        <h2 class="h2-sm">One tool per live data set${DOT}</h2>
+      </div>
+      <div class="split-aside"><p>Hover a feed for what it returns, or open it in the reference for every parameter.</p></div>
+    </div>
+    <ul class="feed-list">
+${feedList}
     </ul>
   </div>
 </section>
 
-<section id="install">
+<section id="install" class="section">
   <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">Install</p>
-      <h2>ChatGPT, or any MCP client</h2>
-      <p>One endpoint: <code>${esc(MCP_URL)}</code>. Streamable HTTP, no auth.</p>
+    <div class="split-head">
+      <div>
+        <p class="eyebrow">Install</p>
+        <h2 class="h2-sm">ChatGPT, or any MCP client${DOT}</h2>
+      </div>
+      <div class="split-aside"><p>One endpoint, streamable HTTP, no auth. Pick your client and paste.</p></div>
     </div>
-    <div class="grid">
+    <div class="install-grid">
 ${installBlocks}
     </div>
   </div>
 </section>
 
-<section id="faq">
+<section id="about" class="section">
   <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">FAQ</p>
-      <h2>Questions</h2>
-    </div>
-    <div class="faq">
-${FAQ.map(([q, a]) => `      <details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('\n')}
+    <div class="panel panel-green split">
+      <div>
+        <p class="eyebrow">Built by Sperax</p>
+        <h2 class="h2-sm">Building in crypto since 2019${DOT}</h2>
+        <p class="lead-sm">Sperax created USDs, the auto-yield stablecoin, and SperaxOS, the AI agent workspace that serves these tools. Sperax is in a strategic partnership with Microsoft through the Microsoft AI Cloud Partner Program, and SperaxOS is available on Microsoft Marketplace.</p>
+        <p class="links"><a href="${SOCIALS.website}">sperax.io${ARROW_UR}</a><a href="${SOCIALS.x}">X${ARROW_UR}</a><a href="${SOCIALS.telegram}">Telegram${ARROW_UR}</a><a href="${SOCIALS.github}">GitHub${ARROW_UR}</a></p>
+      </div>
+      <ul class="facts">
+        <li><img src="${url('icon-192.png')}" alt="Sperax logo" width="42" height="42"></li>
+        <li><strong>2019</strong><span>Building in crypto since</span></li>
+        <li><strong>$17M</strong><span>Raised</span></li>
+        <li><strong>Microsoft</strong><span>Strategic partner through the AI Cloud Partner Program</span></li>
+      </ul>
     </div>
   </div>
 </section>
 
-<section id="about">
+<section id="faq" class="section faq-section">
+  <div class="wrap faq-split">
+    <h2 class="h2-sm">Questions?</h2>
+    <div class="faq">
+${FAQ.map(([q, a]) => `      <details><summary>${esc(q)}<span class="plus" aria-hidden="true"></span></summary><p>${esc(a)}</p></details>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section-cta" aria-labelledby="cta-title">
   <div class="wrap">
-    <div class="about">
-      <img src="${url('icon-192.png')}" alt="Sperax logo" width="64" height="64">
-      <div>
-        <h2>Built by Sperax</h2>
-        <p>Sperax has been building in crypto since 2019 and has raised $17M. It created USDs, the auto-yield stablecoin, and SperaxOS, the AI agent workspace that serves these tools. Sperax is in a strategic partnership with Microsoft through the Microsoft AI Cloud Partner Program, and SperaxOS is available on Microsoft Marketplace.</p>
-        <p><a href="${SOCIALS.website}">sperax.io</a> · <a href="${SOCIALS.x}">X</a> · <a href="${SOCIALS.telegram}">Telegram</a> · <a href="${SOCIALS.github}">GitHub</a></p>
+    <div class="cta-band">
+      <h2 id="cta-title">Check the trade.<br>Before you take it${DOT}</h2>
+      <p>Free in ChatGPT and in any MCP client. No sign-in, no keys.</p>
+      <div class="cta">
+        ${btn(STORE_URL, 'Add to ChatGPT')}
+        ${btn('#install', 'Install in any MCP client', 'outline-light', ARROW_DOWN)}
       </div>
     </div>
   </div>
@@ -559,53 +817,6 @@ ${footer()}`;
 
 // ---------------------------------------------------------------------------------------------
 // tools.html
-
-const typeOf = (schema = {}) => {
-  if (schema.enum) return schema.enum.map((v) => JSON.stringify(v)).join(' | ');
-  const types = [schema.type].flat().filter(Boolean);
-  if (schema.anyOf || schema.oneOf) return (schema.anyOf ?? schema.oneOf).map(typeOf).join(' | ');
-  return types
-    .map((t) => (t === 'array' && schema.items ? `array of ${schema.items.properties ? 'objects' : typeOf(schema.items)}` : t))
-    .join(' | ');
-};
-
-const constraintsOf = (schema = {}) => {
-  const c = [];
-  if (schema.default !== undefined) c.push(`default ${JSON.stringify(schema.default)}`);
-  if (schema.minimum !== undefined) c.push(`≥ ${schema.minimum}`);
-  if (schema.exclusiveMinimum !== undefined) c.push(`> ${schema.exclusiveMinimum}`);
-  if (schema.maximum !== undefined) c.push(`≤ ${schema.maximum}`);
-  if (schema.exclusiveMaximum !== undefined) c.push(`< ${schema.exclusiveMaximum}`);
-  if (schema.minLength !== undefined) c.push(`min length ${schema.minLength}`);
-  if (schema.maxLength !== undefined) c.push(`max length ${schema.maxLength}`);
-  if (schema.minItems !== undefined) c.push(`min ${schema.minItems} item${schema.minItems === 1 ? '' : 's'}`);
-  if (schema.maxItems !== undefined) c.push(`max ${schema.maxItems} item${schema.maxItems === 1 ? '' : 's'}`);
-  if (schema.items?.enum) c.push(`items: ${schema.items.enum.map((v) => JSON.stringify(v)).join(', ')}`);
-  if (schema.pattern) c.push(`pattern ${schema.pattern}`);
-  if (schema.format) c.push(`format ${schema.format}`);
-  return c;
-};
-
-/** Flattens an input schema into rows, expanding array-of-object items as name[].field. */
-const paramRows = (schema, prefix = '') => {
-  const required = new Set(schema?.required ?? []);
-  return Object.entries(schema?.properties ?? {}).flatMap(([name, prop]) => {
-    const row = { constraints: constraintsOf(prop), description: prop.description ?? '', name: `${prefix}${name}`, required: required.has(name), type: typeOf(prop) };
-    const nested = prop.items?.properties ? paramRows(prop.items, `${prefix}${name}[].`) : [];
-    return [row, ...nested];
-  });
-};
-
-const toolTags = (t) => {
-  const a = t.annotations ?? {};
-  const tags = [];
-  if (a.readOnlyHint) tags.push(['Read-only', true]);
-  if (a.destructiveHint === false) tags.push(['Non-destructive', true]);
-  if (a.idempotentHint) tags.push(['Idempotent', false]);
-  tags.push([a.openWorldHint ? 'Live external data' : 'Computed locally', false]);
-  if (t._meta?.['openai/outputTemplate']) tags.push(['Interactive card in ChatGPT', false]);
-  return tags;
-};
 
 const toolArticle = (t) => {
   const rows = paramRows(t.inputSchema);
@@ -662,28 +873,31 @@ const toolsHtml = `${head({
   ],
   page: 'tools.html',
   title: `Tool reference: ${tools.length} crypto analysis MCP tools · Sperax Trading Desk`,
-})}<main id="main">
-<section class="hero">
+})}<main id="main"><section class="page-head">
   <div class="wrap">
     <p class="eyebrow">Tool reference</p>
-    <h1>${tools.length} read-only tools</h1>
+    <h1>${tools.length} read-only tools<span class="dot">.</span></h1>
     <p class="lead">Generated from <code>tools/list</code> on the live endpoint (server ${esc(live.serverInfo?.version)}, MCP ${esc(live.protocolVersion)}) on ${BUILD_DATE}. Every tool is read-only and needs no auth.</p>
+    <div class="cta">
+      ${btn(STORE_URL, 'Add to ChatGPT')}
+      ${btn(url('#install'), 'Install in any MCP client', 'white', ARROW_DOWN)}
+    </div>
   </div>
 </section>
-<section>
-  <div class="wrap">
-    <h2 class="toc-head">Analysis · ${analysis.length} tools</h2>
-    ${toc(analysis)}
-    <h2 class="toc-head">Market feeds · ${feeds.length} tools</h2>
-    ${toc(feeds)}
-  </div>
-</section>
-<section>
-  <div class="wrap">
-    <h2>Analysis tools</h2>
+<section class="section ref-section">
+  <div class="wrap ref">
+    <aside class="ref-nav" aria-label="Tools">
+      <p class="tiny">Analysis · ${analysis.length}</p>
+      ${toc(analysis)}
+      <p class="tiny">Market feeds · ${feeds.length}</p>
+      ${toc(feeds)}
+    </aside>
+    <div class="ref-body">
+      <h2 class="h2-sm">Analysis tools<span class="dot">.</span></h2>
 ${analysis.map(toolArticle).join('\n')}
-    <h2>Market feed tools</h2>
+      <h2 class="h2-sm">Market feed tools<span class="dot">.</span></h2>
 ${feeds.map(toolArticle).join('\n')}
+    </div>
   </div>
 </section>
 </main>
@@ -698,11 +912,12 @@ const notFoundHtml = `${head({ description: 'Page not found.', page: '404.html',
 )}<main id="main">
 <section class="notfound">
   <div class="wrap">
-    <h1>404</h1>
-    <p class="lead">That page does not exist.</p>
+    <p class="eyebrow">Error 404</p>
+    <h1>That page does not exist<span class="dot">.</span></h1>
+    <p class="lead">The link may be out of date. The tools and the install guides are one click away.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="${url()}">Home</a>
-      <a class="btn btn-ghost" href="${url('tools.html')}">Tool reference</a>
+      ${btn(url(), 'Home', 'lime')}
+      ${btn(url('tools.html'), 'Tool reference', 'white')}
     </div>
   </div>
 </section>
@@ -926,7 +1141,7 @@ Canonical: ${url('.well-known/security.txt')}
 `;
 
 const webManifest = {
-  background_color: '#ffffff',
+  background_color: PAPER,
   description: META_DESCRIPTION,
   display: 'standalone',
   icons: [
@@ -937,38 +1152,40 @@ const webManifest = {
   name: 'Sperax Trading Desk',
   short_name: 'Trading Desk',
   start_url: './',
-  theme_color: iface.brandColor,
+  theme_color: PAPER,
 };
 
 // ---------------------------------------------------------------------------------------------
 // Social card (og-image.png 1200x630, .github/social-preview.png 1280x640)
 
 const fontFace = (family, file, weight) =>
-  `@font-face{font-family:'${family}';src:url(data:font/woff2;base64,${readFileSync(path.join(ROOT, 'launch-video/fonts', file)).toString('base64')}) format('woff2');font-weight:${weight};}`;
+  `@font-face{font-family:'${family}';src:url(data:font/woff2;base64,${readFileSync(file).toString('base64')}) format('woff2');font-weight:${weight};}`;
 const logoSvg = readFileSync(path.join(PKG, 'assets/logo.svg'), 'utf8');
 
 const socialCardHtml = (width, height) => `<!doctype html><html><head><meta charset="utf-8"><style>
-${fontFace('Inter', 'Inter.woff2', '100 900')}
-${fontFace('JetBrains Mono', 'JetBrainsMono.woff2', '100 800')}
+${fontFace('DM Sans', path.join(ROOT, 'site/fonts/DMSans.woff2'), '100 1000')}
+${fontFace('Inter', path.join(ROOT, 'launch-video/fonts/Inter.woff2'), '100 900')}
+${fontFace('JetBrains Mono', path.join(ROOT, 'launch-video/fonts/JetBrainsMono.woff2'), '100 800')}
 *{box-sizing:border-box;margin:0}
-body{width:${width}px;height:${height}px;overflow:hidden;font-family:Inter,sans-serif;color:#fff;
-background:radial-gradient(circle at 85% 15%,rgba(167,139,250,.55),transparent 45%),radial-gradient(circle at 10% 100%,rgba(99,102,241,.6),transparent 50%),linear-gradient(135deg,#1e1b4b,#312e81 55%,#4c1d95);
-padding:72px 80px;display:flex;flex-direction:column;justify-content:space-between}
-.top{display:flex;align-items:center;gap:20px;font-size:30px;font-weight:600;letter-spacing:-.01em}
-.top svg{width:64px;height:64px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-.badge{margin-left:auto;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);font-size:20px;font-weight:500}
-.badge i{width:10px;height:10px;border-radius:50%;background:#34d399;box-shadow:0 0 12px #34d399}
-h1{font-size:84px;line-height:1.02;font-weight:800;letter-spacing:-.035em}
-h1 span{background:linear-gradient(90deg,#c4b5fd,#a5b4fc);-webkit-background-clip:text;color:transparent}
-p{margin-top:22px;font-size:28px;line-height:1.35;color:rgba(255,255,255,.82);max-width:960px}
-.row{display:flex;gap:14px;font-family:'JetBrains Mono',monospace;font-size:21px}
-.row div{padding:10px 16px;border-radius:12px;background:rgba(15,16,32,.45);border:1px solid rgba(255,255,255,.14)}
-.row b{color:#c4b5fd;font-weight:700}
+body{width:${width}px;height:${height}px;overflow:hidden;font-family:'DM Sans',Inter,sans-serif;color:#242320;background:${PAPER};
+padding:64px 72px;display:flex;flex-direction:column;justify-content:space-between}
+.top{display:flex;align-items:center;gap:18px;font-size:28px;font-weight:600;letter-spacing:-.02em}
+.top svg{width:56px;height:56px;border-radius:12px}
+.badge{margin-left:auto;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:4px;background:#A6F43B;font-size:18px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.badge i{width:9px;height:9px;border-radius:50%;background:#2F5A16}
+h1{font-family:'Helvetica Neue',Helvetica,Inter,Arial,sans-serif;font-size:88px;line-height:1.0;font-weight:700;letter-spacing:-.045em}
+h1 span{color:#2F5A16}
+h1 em{font-style:normal;color:#A6F43B;-webkit-text-stroke:2px #2F5A16}
+p{margin-top:24px;font-size:27px;line-height:1.4;color:#68635D;max-width:940px}
+.row{display:flex;gap:12px;font-size:20px;color:#242320}
+.row div{padding:12px 18px;border-radius:6px;background:#F8F7F4;box-shadow:0 1px 2px rgba(36,35,32,.08),0 0 0 1px rgba(36,35,32,.06)}
+.row b{font-family:'JetBrains Mono',monospace;color:#2F5A16;font-weight:700;margin-right:4px}
+.row .dark{background:#262724;color:#F1EEEA;box-shadow:none}
 </style></head><body>
 <div class="top">${logoSvg}<span>Sperax Trading Desk</span><div class="badge"><i></i>Live in ChatGPT</div></div>
-<div><h1>Check the trade<br><span>before you take it.</span></h1>
+<div><h1>Check the trade<br><span>before you take it</span><em>.</em></h1>
 <p>Futures positioning, trade sizing, backtests, token scans and live market feeds. Read-only. No sign-in.</p></div>
-<div class="row"><div><b>${tools.length}</b> tools</div><div><b>${feeds.length}</b> live feeds</div><div>ChatGPT · Claude · Cursor · any MCP client</div></div>
+<div class="row"><div><b>${tools.length}</b> tools</div><div><b>${feeds.length}</b> live feeds</div><div class="dark">ChatGPT · Claude · Cursor · any MCP client</div></div>
 </body></html>`;
 
 const renderPng = async (browser, width, height, file) => {
@@ -1002,8 +1219,11 @@ write('.nojekyll', '');
 
 copyFileSync(path.join(ROOT, 'site/styles.css'), path.join(OUT, 'styles.css'));
 copyFileSync(path.join(ROOT, 'site/app.js'), path.join(OUT, 'app.js'));
-for (const font of ['Inter.woff2', 'JetBrainsMono.woff2']) {
+for (const font of ['Inter.woff2', 'JetBrainsMono.woff2', 'OFL.txt']) {
   copyFileSync(path.join(ROOT, 'launch-video/fonts', font), path.join(OUT, 'fonts', font));
+}
+for (const file of ['DMSans.woff2', 'DMSans-OFL.txt']) {
+  copyFileSync(path.join(ROOT, 'site/fonts', file), path.join(OUT, 'fonts', file));
 }
 copyFileSync(path.join(ROOT, 'launch-video', VIDEO_FILE), path.join(OUT, 'media', VIDEO_FILE));
 copyFileSync(path.join(PKG, 'assets/logo.svg'), path.join(OUT, 'favicon.svg'));
