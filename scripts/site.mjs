@@ -284,7 +284,7 @@ const toolTags = (t) => {
 // ---------------------------------------------------------------------------------------------
 // Page chrome
 
-const PAPER = '#F3F3F3';
+const PAPER = '#0A0B0D';
 
 const svg = (body, size = 16, viewBox = '0 0 16 16') =>
   `<svg class="ic" viewBox="${viewBox}" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
@@ -1167,20 +1167,20 @@ ${fontFace('DM Sans', path.join(ROOT, 'site/fonts/DMSans.woff2'), '100 1000')}
 ${fontFace('Inter', path.join(ROOT, 'launch-video/fonts/Inter.woff2'), '100 900')}
 ${fontFace('JetBrains Mono', path.join(ROOT, 'launch-video/fonts/JetBrainsMono.woff2'), '100 800')}
 *{box-sizing:border-box;margin:0}
-body{width:${width}px;height:${height}px;overflow:hidden;font-family:'DM Sans',Inter,sans-serif;color:#141414;background:${PAPER};
+body{width:${width}px;height:${height}px;overflow:hidden;font-family:'DM Sans',Inter,sans-serif;color:#EDEDEF;background:radial-gradient(70% 90% at 100% 0%,rgba(139,147,255,.22) 0%,transparent 60%),radial-gradient(60% 80% at 0% 100%,rgba(94,230,196,.10) 0%,transparent 60%),${PAPER};
 padding:64px 72px;display:flex;flex-direction:column;justify-content:space-between}
 .top{display:flex;align-items:center;gap:18px;font-size:28px;font-weight:600;letter-spacing:-.02em}
-.top svg{width:56px;height:56px;border-radius:12px;filter:grayscale(1)}
-.badge{margin-left:auto;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:4px;background:#141414;color:#fff;font-size:18px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-.badge i{width:9px;height:9px;border-radius:50%;background:#fff}
+.top svg{width:56px;height:56px;border-radius:12px}
+.badge{margin-left:auto;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:4px;background:rgba(94,230,196,.12);color:#5EE6C4;box-shadow:inset 0 0 0 1px rgba(94,230,196,.35);font-size:18px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.badge i{width:9px;height:9px;border-radius:50%;background:#5EE6C4;box-shadow:0 0 0 4px rgba(94,230,196,.2)}
 h1{font-family:'Helvetica Neue',Helvetica,Inter,Arial,sans-serif;font-size:88px;line-height:1.0;font-weight:700;letter-spacing:-.045em}
-h1 span{color:#5E5E5E}
-h1 em{font-style:normal;color:#858585}
-p{margin-top:24px;font-size:27px;line-height:1.4;color:#5E5E5E;max-width:940px}
-.row{display:flex;gap:12px;font-size:20px;color:#141414}
-.row div{padding:12px 18px;border-radius:6px;background:#FAFAFA;box-shadow:0 1px 2px rgba(20,20,20,.08),0 0 0 1px rgba(20,20,20,.06)}
-.row b{font-family:'JetBrains Mono',monospace;color:#141414;font-weight:700;margin-right:4px}
-.row .dark{background:#171717;color:#F3F3F3;box-shadow:none}
+h1 span{color:#9597A0}
+h1 em{font-style:normal;color:#8B93FF}
+p{margin-top:24px;font-size:27px;line-height:1.4;color:#9597A0;max-width:940px}
+.row{display:flex;gap:12px;font-size:20px;color:#EDEDEF}
+.row div{padding:12px 18px;border-radius:6px;background:#15161B;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.row b{font-family:'JetBrains Mono',monospace;color:#A9AFFF;font-weight:700;margin-right:4px}
+.row .dark{background:#F4F4F6;color:#0A0B0D;box-shadow:none}
 </style></head><body>
 <div class="top">${logoSvg}<span>Sperax Trading Desk</span><div class="badge"><i></i>Live in ChatGPT</div></div>
 <div><h1>Check the trade<br><span>before you take it</span><em>.</em></h1>
