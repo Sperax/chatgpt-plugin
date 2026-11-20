@@ -6,7 +6,7 @@
   "homepage": "https://sperax-trading-desk.pages.dev/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nirholas/chatgpt-plugin.git"
+    "url": "git+https://github.com/Sperax/chatgpt-plugin.git"
   },
   "license": "Apache-2.0",
   "author": "Sperax <support@sperax.io> (https://www.sperax.io)",

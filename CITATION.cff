@@ -13,7 +13,7 @@ version: 2.0.0
 date-released: 2026-11-17
 license: Apache-2.0
 url: https://sperax-trading-desk.pages.dev/
-repository-code: https://github.com/nirholas/chatgpt-plugin
+repository-code: https://github.com/Sperax/chatgpt-plugin
 keywords:
   - chatgpt
   - model-context-protocol

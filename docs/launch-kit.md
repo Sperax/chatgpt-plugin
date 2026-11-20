@@ -13,7 +13,7 @@ for a later version.
 | One line | Free, read-only crypto trade analysis for ChatGPT and any MCP client |
 | ChatGPT listing | <https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c> |
 | Website | <https://sperax-trading-desk.pages.dev/> |
-| Code | <https://github.com/nirholas/chatgpt-plugin> |
+| Code | <https://github.com/Sperax/chatgpt-plugin> |
 | MCP endpoint | `https://chat.sperax.io/webapi/mcp/trading-copilot` (streamable HTTP, no key) |
 | Tools | 43, all read-only: 8 analysis tools and 35 live market feeds, plus 4 guided skills |
 | Social card | [`.github/social-preview.png`](../.github/social-preview.png) (1280x640) or the site's `og-image.png` (1200x630) |
@@ -135,7 +135,7 @@ no API key
 > https://sperax-trading-desk.pages.dev/
 >
 > The package, validator and site generator are Apache-2.0:
-> https://github.com/nirholas/chatgpt-plugin
+> https://github.com/Sperax/chatgpt-plugin
 >
 > Feedback on which tools or feeds to add next is welcome.
 
@@ -145,7 +145,7 @@ Submit the GitHub repository as a Show HN. Post the first comment yourself withi
 
 **Title:** Show HN: A read-only crypto trading desk for ChatGPT and any MCP client
 
-**URL:** https://github.com/nirholas/chatgpt-plugin
+**URL:** https://github.com/Sperax/chatgpt-plugin
 
 **First comment:**
 
@@ -224,4 +224,4 @@ repository or `server.json`.
 - Answer every comment in the first 24 hours. Add the questions people ask to the FAQ in
   [`scripts/site.mjs`](../scripts/site.mjs).
 - Turn tool requests into issues with the
-  [tool request template](https://github.com/nirholas/chatgpt-plugin/issues/new?template=tool_request.yml).
+  [tool request template](https://github.com/Sperax/chatgpt-plugin/issues/new?template=tool_request.yml).

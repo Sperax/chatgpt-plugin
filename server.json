@@ -6,7 +6,7 @@
   "version": "2.0.0",
   "websiteUrl": "https://sperax-trading-desk.pages.dev/",
   "repository": {
-    "url": "https://github.com/nirholas/chatgpt-plugin",
+    "url": "https://github.com/Sperax/chatgpt-plugin",
     "source": "github"
   },
   "remotes": [

@@ -4,5 +4,5 @@ contact_links:
     url: https://chat.sperax.io/support
     about: Questions about using Sperax Trading Desk in ChatGPT. You can also email support@sperax.io.
   - name: Report a security vulnerability
-    url: https://github.com/nirholas/chatgpt-plugin/security/advisories/new
+    url: https://github.com/Sperax/chatgpt-plugin/security/advisories/new
     about: Report privately. Do not open a public issue for a vulnerability.

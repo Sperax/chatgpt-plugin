@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Email **security@sperax.io**, or open a private report through
-[GitHub security advisories](https://github.com/nirholas/chatgpt-plugin/security/advisories/new).
+[GitHub security advisories](https://github.com/Sperax/chatgpt-plugin/security/advisories/new).
 Do not open a public issue for a vulnerability.
 
 Include what you found, how to reproduce it and what an attacker could do with it. We acknowledge

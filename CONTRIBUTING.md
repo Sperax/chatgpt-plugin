@@ -7,9 +7,9 @@ SperaxOS and is not part of this repository.
 ## Ways to help
 
 - **Report a bug**: a tool returns wrong numbers, an install snippet fails in your client, or the
-  site is broken. Use the [bug report](https://github.com/nirholas/chatgpt-plugin/issues/new?template=bug_report.yml).
+  site is broken. Use the [bug report](https://github.com/Sperax/chatgpt-plugin/issues/new?template=bug_report.yml).
 - **Request a tool or data feed**: use the
-  [tool request](https://github.com/nirholas/chatgpt-plugin/issues/new?template=tool_request.yml).
+  [tool request](https://github.com/Sperax/chatgpt-plugin/issues/new?template=tool_request.yml).
 - **Improve the package, skills, scripts or docs**: open a pull request.
 
 ## Development
