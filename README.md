@@ -9,7 +9,7 @@
 
 # Sperax Trading Desk — ChatGPT plugin
 
-[![ChatGPT plugin](https://img.shields.io/badge/ChatGPT-plugin_directory-10a37f?logo=openai&logoColor=white)](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c)
+[![Sperax ChatGPT Plugin](https://img.shields.io/badge/ChatGPT-plugin_directory-10a37f?logo=openai&logoColor=white)](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c)
 [![MCP endpoint](https://img.shields.io/badge/MCP-streamable_HTTP-6d28d9)](https://sperax-trading-desk.pages.dev/#install)
 [![Tools](https://img.shields.io/badge/tools-43_read--only-0f766e)](https://sperax-trading-desk.pages.dev/tools)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
