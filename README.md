@@ -1,3 +1,12 @@
+<p align="center">
+  <a href="https://sperax-trading-desk.pages.dev/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="site/logo.svg">
+      <img src=".github/logo-on-light.svg" alt="SperaxOS" width="183" height="39">
+    </picture>
+  </a>
+</p>
+
 # Sperax Trading Desk — ChatGPT plugin
 
 [![ChatGPT plugin](https://img.shields.io/badge/ChatGPT-plugin_directory-10a37f?logo=openai&logoColor=white)](https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c)
