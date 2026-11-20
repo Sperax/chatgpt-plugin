@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sperax Trading Desk: crypto trade analysis for ChatGPT and MCP</title>
+<meta name="description" content="Free, read-only crypto analysis for ChatGPT and any MCP client: futures positioning, trade sizing with a liquidation check, backtests, token safety scans and 35 live market feeds. No sign-in.">
+<meta name="keywords" content="ChatGPT plugin, MCP server, crypto trading, derivatives, funding rates, position sizing, backtesting, token safety, honeypot scanner, DeFi, Bitcoin, Ethereum, Solana, Sperax">
+<meta name="author" content="Sperax">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="canonical" href="https://sperax-trading-desk.pages.dev/">
+<link rel="icon" href="https://sperax-trading-desk.pages.dev/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="https://sperax-trading-desk.pages.dev/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="https://sperax-trading-desk.pages.dev/apple-touch-icon.png">
+<link rel="manifest" href="https://sperax-trading-desk.pages.dev/site.webmanifest">
+<link rel="alternate" type="text/plain" title="llms.txt" href="https://sperax-trading-desk.pages.dev/llms.txt">
+<link rel="alternate" type="application/json" title="MCP server card" href="https://sperax-trading-desk.pages.dev/.well-known/mcp/server-card.json">
+<link rel="preload" href="https://sperax-trading-desk.pages.dev/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://sperax-trading-desk.pages.dev/styles.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sperax Trading Desk">
+<meta property="og:title" content="Sperax Trading Desk: crypto trade analysis for ChatGPT and MCP">
+<meta property="og:description" content="Free, read-only crypto analysis for ChatGPT and any MCP client: futures positioning, trade sizing with a liquidation check, backtests, token safety scans and 35 live market feeds. No sign-in.">
+<meta property="og:url" content="https://sperax-trading-desk.pages.dev/">
+<meta property="og:image" content="https://sperax-trading-desk.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sperax Trading Desk: check the trade before you take it">
+<meta property="og:video" content="https://sperax-trading-desk.pages.dev/media/sperax-trading-desk-chatgpt.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1920">
+<meta property="og:video:height" content="1080">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@SperaxUSD">
+<meta name="twitter:title" content="Sperax Trading Desk: crypto trade analysis for ChatGPT and MCP">
+<meta name="twitter:description" content="Free, read-only crypto analysis for ChatGPT and any MCP client: futures positioning, trade sizing with a liquidation check, backtests, token safety scans and 35 live market feeds. No sign-in.">
+<meta name="twitter:image" content="https://sperax-trading-desk.pages.dev/og-image.png">
+<meta name="twitter:image:alt" content="Sperax Trading Desk: check the trade before you take it">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","applicationCategory":"FinanceApplication","applicationSubCategory":"Crypto trading analysis","description":"Free, read-only crypto analysis for ChatGPT and any MCP client: futures positioning, trade sizing with a liquidation check, backtests, token safety scans and 35 live market feeds. No sign-in.","featureList":["Futures positioning","Coin technical analysis","Position sizing","Strategy backtesting","Live market feeds","Token safety scans","Swap quote comparison","Wallet review","Portfolio stress testing"],"image":"https://sperax-trading-desk.pages.dev/og-image.png","installUrl":"https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c","isAccessibleForFree":true,"keywords":"crypto, trading, derivatives, risk management, backtesting, token safety, portfolio","name":"Sperax Trading Desk","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"operatingSystem":"ChatGPT, any MCP client","publisher":{"@type":"Organization","@id":"https://www.sperax.io/#organization","logo":"https://sperax-trading-desk.pages.dev/icon-512.png","name":"Sperax","sameAs":["https://x.com/SperaxUSD","https://t.me/SperaxUSD","https://github.com/Sperax","https://github.com/Sperax/chatgpt-plugin"],"url":"https://www.sperax.io"},"author":{"@type":"Organization","@id":"https://www.sperax.io/#organization","logo":"https://sperax-trading-desk.pages.dev/icon-512.png","name":"Sperax","sameAs":["https://x.com/SperaxUSD","https://t.me/SperaxUSD","https://github.com/Sperax","https://github.com/Sperax/chatgpt-plugin"],"url":"https://www.sperax.io"},"releaseNotes":"First release. Read-only analysis tools for crypto traders: derivatives positioning, coin analysis, trade sizing with a liquidation check, strategy backtests, 35 live market feeds (one tool each), token safety scans, swap quote comparison, wallet reviews and portfolio stress tests. It does not place orders or build transactions.","sameAs":["https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c","https://github.com/Sperax/chatgpt-plugin"],"screenshot":"https://sperax-trading-desk.pages.dev/og-image.png","softwareVersion":"2.0.0","url":"https://sperax-trading-desk.pages.dev/","datePublished":"2026-11-17","video":{"@type":"VideoObject","contentUrl":"https://sperax-trading-desk.pages.dev/media/sperax-trading-desk-chatgpt.mp4","description":"A 43-second tour of Sperax Trading Desk in ChatGPT, showing real responses from the live tools.","duration":"PT43S","name":"Sperax Trading Desk for ChatGPT","thumbnailUrl":"https://sperax-trading-desk.pages.dev/og-image.png","uploadDate":"2026-11-17"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","description":"Free, read-only crypto analysis for ChatGPT and any MCP client: futures positioning, trade sizing with a liquidation check, backtests, token safety scans and 35 live market feeds. No sign-in.","name":"Sperax Trading Desk","publisher":{"@type":"Organization","@id":"https://www.sperax.io/#organization","logo":"https://sperax-trading-desk.pages.dev/icon-512.png","name":"Sperax","sameAs":["https://x.com/SperaxUSD","https://t.me/SperaxUSD","https://github.com/Sperax","https://github.com/Sperax/chatgpt-plugin"],"url":"https://www.sperax.io"},"url":"https://sperax-trading-desk.pages.dev/"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"Sperax Trading Desk gives crypto traders read-only analysis tools that check an idea against real numbers before they act on it anywhere else. It is live in the ChatGPT plugin directory and works in any MCP client."},"name":"What is Sperax Trading Desk?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"No. Every tool is read-only. It does not connect to exchange accounts, place orders, build transactions or sign anything, and it never asks for keys or seed phrases."},"name":"Can it place trades or move my funds?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"No. The plugin and the MCP endpoint need no sign-in. Each IP may send 120 requests per minute."},"name":"Do I need an account or an API key?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"Nothing. The plugin and the endpoint are free to use."},"name":"What does it cost?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"Public market sources, including OKX and Hyperliquid for derivatives, CoinGecko for prices, LI.FI, KyberSwap and Jupiter for swap quotes, Yahoo Finance and Finnhub for traditional markets, and on-chain data for token scans and wallet reviews. Responses are cached for 60 seconds to 15 minutes."},"name":"Where does the data come from?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"Yes. Point any MCP client that supports remote streamable-HTTP servers at https://chat.sperax.io/webapi/mcp/trading-copilot. Setup for Claude, Cursor, VS Code, Windsurf, Gemini CLI and Codex is above."},"name":"Can I use it outside ChatGPT?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"No. Results are educational analysis built from public data. Backtests use daily candles, and past performance does not predict future results."},"name":"Is it financial advice?"},{"@type":"Question","acceptedAnswer":{"@type":"Answer","text":"Sperax, the team behind USDs and SperaxOS. Sperax has been building since 2019, has raised $17M and is in a strategic partnership with Microsoft."},"name":"Who builds it?"}]}</script>
+<script src="https://sperax-trading-desk.pages.dev/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="https://sperax-trading-desk.pages.dev/" aria-label="Sperax Trading Desk home"><img src="https://sperax-trading-desk.pages.dev/logo.svg" alt="" width="113" height="24"><span>Trading Desk</span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="https://sperax-trading-desk.pages.dev/#tools">Tools</a>
+      <a href="https://sperax-trading-desk.pages.dev/#install">Install</a>
+      <a href="https://sperax-trading-desk.pages.dev/tools">Reference</a>
+      <a href="https://sperax-trading-desk.pages.dev/#faq">FAQ</a>
+      <a href="https://github.com/Sperax/chatgpt-plugin">GitHub</a>
+    </nav>
+    <a class="btn btn-lime btn-sm" href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c"><span>Add to ChatGPT</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a>
+  </div>
+</header>
+<main id="main">
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-panel">
+      <div class="hero-copy">
+        <p class="hero-intro"><a href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c">Live in the ChatGPT plugin directory</a></p>
+        <h1>Check the trade before you take it<span class="dot">.</span></h1>
+        <p class="lead">Sperax Trading Desk gives crypto traders read-only analysis tools that check an idea against real numbers before they act on it anywhere else. Works in ChatGPT and any MCP client. Free, read-only, no sign-in.</p>
+        <div class="cta">
+          <a class="btn btn-lime" href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c"><span>Add to ChatGPT</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a>
+          <a class="btn btn-white" href="#install"><span>Install in any MCP client</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4"/></svg></a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <video controls playsinline preload="none" poster="https://sperax-trading-desk.pages.dev/og-image.png" width="1920" height="1080">
+          <source src="https://sperax-trading-desk.pages.dev/media/sperax-trading-desk-chatgpt.mp4" type="video/mp4">
+          <a href="https://sperax-trading-desk.pages.dev/media/sperax-trading-desk-chatgpt.mp4">Watch the 43-second launch video</a>
+        </video>
+        <p class="tiny">Launch video · 43 seconds</p>
+      </div>
+    </div>
+    <ul class="fcards">
+<li class="fcard">
+  <a href="https://sperax-trading-desk.pages.dev/tools#analyze_coin">
+    <div class="fcard-head"><span class="tile tile-1"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg></span><div><h3>Analyze coin</h3><code>analyze_coin</code></div></div>
+    <p class="fcard-desc">Returns EMA 20/50/200 trend, RSI, MACD, ATR, swing support and resistance, volume and perp positioning folded into a verdict with reasons and a plan seed (entry, ATR stop, targets) to pass to build_trade_plan.</p>
+    <div class="kv"><span class="tiny">Required input</span><strong>symbol</strong></div>
+    <div class="fcard-foot"><span>Interactive card in ChatGPT</span><span class="view">Reference<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span></div>
+  </a>
+</li>
+<li class="fcard">
+  <a href="https://sperax-trading-desk.pages.dev/tools#build_trade_plan">
+    <div class="fcard-head"><span class="tile tile-2"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg></span><div><h3>Build trade plan</h3><code>build_trade_plan</code></div></div>
+    <p class="fcard-desc">Returns the size that loses exactly riskPct of the account at the stop with fees included, notional and margin, the R-multiple and net P&amp;L of each target, the breakeven win rate, expectancy and half-Kelly when winProbability is given, and whether leverage would liquidate the position before the stop.</p>
+    <div class="kv"><span class="tiny">Required inputs</span><strong>accountSize · entry · side · stop</strong></div>
+    <div class="fcard-foot"><span>Analysis</span><span class="view">Reference<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span></div>
+  </a>
+</li>
+<li class="fcard">
+  <a href="https://sperax-trading-desk.pages.dev/tools#backtest_signal_strategy">
+    <div class="fcard-head"><span class="tile tile-3"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3 3.5V8h4.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><h3>Backtest signal strategy</h3><code>backtest_signal_strategy</code></div></div>
+    <p class="fcard-desc">Simulates the strategy on 1-3 coins over 30-365 days of daily prices with fees, slippage and gas, and returns total and annualized return, max drawdown, Sharpe, win rate, profit factor, recent trades, a sampled equity curve and buy-and-hold and BTC benchmarks.</p>
+    <div class="kv"><span class="tiny">Required inputs</span><strong>coins · strategy</strong></div>
+    <div class="fcard-foot"><span>Analysis</span><span class="view">Reference<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span></div>
+  </a>
+</li>
+<li class="fcard">
+  <a href="https://sperax-trading-desk.pages.dev/tools#scan_token">
+    <div class="fcard-head"><span class="tile tile-4"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 19.5 5.5v6c0 4.6-3.1 7.9-7.5 9.5-4.4-1.6-7.5-4.9-7.5-9.5v-6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span><div><h3>Scan token safety</h3><code>scan_token</code></div></div>
+    <p class="fcard-desc">Works by symbol or contract on any EVM chain or Solana and checks honeypot, buy and sell tax, mint and owner powers, holder concentration, liquidity and pair age, returning a safe, caution or danger verdict with flags.</p>
+    <div class="kv"><span class="tiny">Required input</span><strong>token</strong></div>
+    <div class="fcard-foot"><span>Analysis</span><span class="view">Reference<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span></div>
+  </a>
+</li>
+    </ul>
+  </div>
+</section>
+
+<section id="prompts" class="section">
+  <div class="wrap">
+    <div class="split-head">
+      <div>
+        <p class="eyebrow">For traders</p>
+        <h2>Your questions.<br>Live numbers to answer them.</h2>
+      </div>
+      <div class="split-aside">
+        <p>Ask in plain language. ChatGPT picks the tools and builds the answer from live market data, not guesses.</p>
+        <a class="btn btn-ink" href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c"><span>Add to ChatGPT</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-head"><span>Your question</span><span class="num">01</span></div>
+        <div class="step-ask">
+          <span class="tile tile-1"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg></span>
+          <q>Size a long on SOL at 150, stop 142, targets 165 and 180, risking 1% of a $10,000 account.</q>
+        </div>
+        <dl class="fields">
+          <div><dt>Client</dt><dd>ChatGPT or any MCP client</dd></div>
+          <div><dt>Sign-in</dt><dd>None</dd></div>
+        </dl>
+        <a class="step-link" href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c">Ask it in ChatGPT<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a>
+      </div>
+      <span class="flow-arrow" aria-hidden="true"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+      <div class="step">
+        <div class="step-head"><span>Tools called</span><span class="num">02</span></div>
+        <div class="step-band">
+          <div class="step-band-tools"><code>analyze_coin</code><code>build_trade_plan</code></div>
+          <svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg>
+          <p class="tiny">2 tools chained on one question</p>
+        </div>
+        <ol class="chain">
+          <li><span class="num">01</span><div><strong>Analyze coin</strong><span>Needs symbol</span></div></li>
+          <li><span class="num">02</span><div><strong>Build trade plan</strong><span>Needs accountSize, entry, side, stop</span></div></li>
+        </ol>
+        <div class="step-row"><span>Live endpoint</span><a href="https://sperax-trading-desk.pages.dev/tools">Server 2.1.23 · MCP 2025-06-18<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></div>
+        <p class="step-note">Streamable HTTP, no auth, 120 requests per minute per IP.</p>
+      </div>
+      <span class="flow-arrow" aria-hidden="true"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+      <div class="step">
+        <div class="step-head"><span>What comes back</span><span class="num">03</span></div>
+        <ul class="checks">
+          <li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Read-only</span></li>
+          <li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Non-destructive</span></li>
+          <li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Live external data</span></li>
+          <li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Interactive card in ChatGPT</span></li>
+          <li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Idempotent</span></li>
+          <li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Computed locally</span></li>
+        </ul>
+        <p class="step-note">No orders, no keys, no custody.</p>
+      </div>
+    </div>
+
+    <ol class="numbered">
+      <li><span class="num">01</span><div><h3>Ask in plain language.</h3><p>No commands to learn. ChatGPT reads the question and picks the right tools.</p></div></li>
+      <li><span class="num">02</span><div><h3>Live data on every call.</h3><p>8 analysis tools and 35 market feeds read public sources at the moment you ask.</p></div></li>
+      <li><span class="num">03</span><div><h3>Read the result, then decide.</h3><p>Sizing, liquidation distance, backtests and scans. The decision and the trade stay with you.</p></div></li>
+    </ol>
+
+    <div class="try">
+      <p class="eyebrow">Try asking</p>
+      <ul class="prompt-list">
+<li><q>Is Bitcoin perp funding crowded right now, and is there squeeze risk?</q><span class="chips"><a class="tool-name" href="https://sperax-trading-desk.pages.dev/tools#get_derivatives_positioning">get_derivatives_positioning</a></span></li>
+<li><q>Backtest buying ETH when RSI drops below 30 and selling above 70 over the last 180 days.</q><span class="chips"><a class="tool-name" href="https://sperax-trading-desk.pages.dev/tools#backtest_signal_strategy">backtest_signal_strategy</a></span></li>
+<li><q>Scan PEPE for honeypot risk, taxes and holder concentration.</q><span class="chips"><a class="tool-name" href="https://sperax-trading-desk.pages.dev/tools#scan_token">scan_token</a></span></li>
+<li><q>Stress test 2 BTC, 20 ETH and 500 SOL through FTX and LUNA.</q><span class="chips"><a class="tool-name" href="https://sperax-trading-desk.pages.dev/tools#stress_test_portfolio">stress_test_portfolio</a></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="tools" class="section">
+  <div class="wrap">
+    <div class="panel panel-tint split">
+      <div>
+        <p class="eyebrow">8 analysis tools</p>
+        <h2 class="h2-sm">Size, test and sanity-check the trade<span class="dot">.</span></h2>
+        <p class="lead-sm">Each tool does one job a trader would otherwise do by hand across five tabs.</p>
+        <ul class="tool-list">
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_derivatives_positioning"><span class="tl-title">Get derivatives positioning<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Returns OKX and Hyperliquid funding (8h and annualized), open interest and its 24h change, global and top-trader long/short ratios, and a crowding, open-interest-regime and squeeze-risk read.</span><code>get_derivatives_positioning</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#build_trade_plan"><span class="tl-title">Build trade plan<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Returns the size that loses exactly riskPct of the account at the stop with fees included, notional and margin, the R-multiple and net P&amp;L of each target, the breakeven win rate, expectancy and half-Kelly when winProbability is given, and whether leverage would liquidate the position before the stop.</span><code>build_trade_plan</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#backtest_signal_strategy"><span class="tl-title">Backtest signal strategy<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Simulates the strategy on 1-3 coins over 30-365 days of daily prices with fees, slippage and gas, and returns total and annualized return, max drawdown, Sharpe, win rate, profit factor, recent trades, a sampled equity curve and buy-and-hold and BTC benchmarks.</span><code>backtest_signal_strategy</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#scan_token"><span class="tl-title">Scan token safety<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Works by symbol or contract on any EVM chain or Solana and checks honeypot, buy and sell tax, mint and owner powers, holder concentration, liquidity and pair age, returning a safe, caution or danger verdict with flags.</span><code>scan_token</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#compare_swap_quotes"><span class="tl-title">Compare swap quotes<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Fetches live quotes from LI.FI, KyberSwap and Jupiter for any token on any chain and ranks them by output, with USD value, price impact, gas and the gap to the top quote.</span><code>compare_swap_quotes</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#review_wallet"><span class="tl-title">Review wallet<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Reviews an EVM or Solana wallet: holdings and concentration, risky token approvals with revoke links, safety scans of held tokens and crisis-scenario drawdowns, ranked into findings with a healthy, attention or at_risk verdict.</span><code>review_wallet</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#stress_test_portfolio"><span class="tl-title">Stress test portfolio<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Replays the holdings through real crypto crises (2025 tariff shock, yen carry unwind, SVB and USDC depeg, FTX, LUNA, May 2021 deleveraging, COVID crash) and returns drawdown, dollar loss and top losers per scenario, plus optional VaR, CVaR and risk contribution.</span><code>stress_test_portfolio</code></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#analyze_coin"><span class="tl-title">Analyze coin<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></span><span class="tl-desc">Returns EMA 20/50/200 trend, RSI, MACD, ATR, swing support and resistance, volume and perp positioning folded into a verdict with reasons and a plan seed (entry, ATR stop, targets) to pass to build_trade_plan.</span><code>analyze_coin</code></a></li>
+        </ul>
+      </div>
+      <div class="catalog">
+        <div class="card">
+          <div class="card-head"><p class="eyebrow">Live catalog</p><a class="pill" href="https://sperax-trading-desk.pages.dev/tools">Full reference</a></div>
+          <div class="card-id">
+            <img src="https://sperax-trading-desk.pages.dev/icon-192.png" alt="" width="42" height="42">
+            <div><strong>Sperax Trading Desk</strong><span>Server 2.1.23 · MCP 2025-06-18</span></div>
+            <span class="live"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg>Live</span>
+          </div>
+          <div class="bar" role="img" aria-label="8 analysis tools, 35 market feeds, 4 skills">
+            <span class="seg-1" style="flex-grow:8"></span>
+            <span class="seg-2" style="flex-grow:35"></span>
+            <span class="seg-3" style="flex-grow:4"></span>
+          </div>
+          <ul class="legend">
+            <li><span class="swatch seg-1" aria-hidden="true"></span>Analysis tools<strong>8</strong></li>
+            <li><span class="swatch seg-2" aria-hidden="true"></span>Market feeds<strong>35</strong></li>
+            <li><span class="swatch seg-3" aria-hidden="true"></span>Skills<strong>4</strong></li>
+          </ul>
+          <p class="tiny">Endpoint</p>
+          <div class="code"><pre><code>https://chat.sperax.io/webapi/mcp/trading-copilot</code></pre><button class="copy" type="button" aria-label="Copy MCP endpoint">Copy</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="safety" class="section">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Read-only by design</p>
+      <h2 class="h2-sm">What it will not do<span class="dot">.</span></h2>
+      <p class="lead-sm">Your keys, accounts and funds never touch it. Every tool declares itself read-only to the client that calls it.</p>
+      <a class="btn btn-ink" href="https://github.com/Sperax/chatgpt-plugin"><span>Read the source</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a>
+      <ul class="bold-list">
+        <li><strong>No trade execution and no trade links.</strong> Swap, perp, order and action link builders are not exposed. Quote comparisons carry no DEX links or transaction data.</li>
+        <li><strong>No account access.</strong> It never connects to an exchange account, never asks for keys or seed phrases and needs no sign-in.</li>
+        <li><strong>No custody and no signing.</strong> It cannot hold funds, build transactions or sign anything.</li>
+        <li><strong>No prediction markets or social feeds.</strong> Prediction markets, third-party social posts and internal service status are not exposed. Upstream errors and internal timestamps are removed from responses.</li>
+        <li><strong>No financial advice.</strong> Results are educational analysis. Market data is public and can be delayed. Backtests use daily candles, and past performance does not predict future results.</li>
+      </ul>
+    </div>
+    <div class="frame frame-beige">
+      <div class="card card-flush">
+        <div class="band">
+          <span class="band-word">read-only</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg>
+          <p class="tiny">Every tool, every call.</p>
+        </div>
+        <div class="card-body">
+          <div class="card-title"><h3>Tool annotations</h3><span>43 tools</span></div>
+          <p>Declared by the live server in <code>tools/list</code>. Clients read these hints before they call a tool.</p>
+          <ul class="pills"><li>MCP 2025-06-18</li><li>No auth</li><li>120 requests per minute per IP</li></ul>
+          <p class="eyebrow">What the server declares</p>
+          <ul class="ann">
+            <li><code>readOnlyHint: true</code><span>43 of 43</span></li>
+            <li><code>destructiveHint: false</code><span>43 of 43</span></li>
+            <li><code>openWorldHint: true</code><span>42 of 43</span></li>
+            <li><code>openai/outputTemplate</code><span>4 of 43</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="behind">
+  <div class="wrap">
+    <h2 class="h2-sm" id="behind">See what's behind the answer<span class="dot">.</span></h2>
+    <p class="lead-sm">The feeds, the guided flows and the files agents read. All of it is public.</p>
+    <div class="trio">
+      <article class="tcard">
+        <div class="tcard-media tint-green">
+          <div class="card">
+            <span class="tile tile-1"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg></span>
+            <h3 class="tcard-num">35 feeds</h3>
+            <ul class="mini">
+              <li><a href="https://sperax-trading-desk.pages.dev/tools#get_fear_greed_index">Fear &amp; Greed Index<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+              <li><a href="https://sperax-trading-desk.pages.dev/tools#get_market_regime">market regime<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+              <li><a href="https://sperax-trading-desk.pages.dev/tools#get_macro_dashboard">macro dashboard<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+              <li><a href="https://sperax-trading-desk.pages.dev/tools#get_traditional_market_chart">traditional market chart<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+            </ul>
+          </div>
+          <p class="tiny">From the live catalog</p>
+        </div>
+        <h3>Live market feeds.</h3>
+        <p>Sentiment, macro, derivatives, on-chain flows, DeFi and news. Each feed takes only the parameters it uses. <a href="#feeds">See all 35</a>.</p>
+      </article>
+      <article class="tcard" id="skills">
+        <div class="tcard-media tint-beige">
+          <div class="card">
+            <p class="tiny">4 skills</p>
+            <ul class="skill-list">
+<li><a href="https://github.com/Sperax/chatgpt-plugin/blob/main/sperax-trading-copilot/skills/backtest-translation/SKILL.md"><strong>backtest-translation</strong><span>Turn a strategy described in plain language into backtest conditions, run it, and explain the result against buy-and-hold.</span></a></li>
+<li><a href="https://github.com/Sperax/chatgpt-plugin/blob/main/sperax-trading-copilot/skills/pre-trade-check/SKILL.md"><strong>pre-trade-check</strong><span>Run a full pre-trade check on one coin before the user acts on an idea elsewhere.</span></a></li>
+<li><a href="https://github.com/Sperax/chatgpt-plugin/blob/main/sperax-trading-copilot/skills/setup/SKILL.md"><strong>setup</strong><span>Set up Sperax Trading Desk for a new user by collecting their account size, default risk per trade, usual leverage and coins they trade, then running a first positioning check.</span></a></li>
+<li><a href="https://github.com/Sperax/chatgpt-plugin/blob/main/sperax-trading-copilot/skills/stress-test/SKILL.md"><strong>stress-test</strong><span>Stress test the user&#39;s crypto holdings against recorded crises and explain the downside in dollars.</span></a></li>
+            </ul>
+          </div>
+          <p class="tiny">Guided flows</p>
+        </div>
+        <h3>Guided skills.</h3>
+        <p>Skills chain the tools into the checks traders run most. Each one is a readable file in the repository.</p>
+      </article>
+      <article class="tcard">
+        <div class="tcard-media tint-lime">
+          <div class="card">
+            <p class="tiny">For agents and crawlers</p>
+            <ul class="mini mini-desc">
+              <li><a href="https://sperax-trading-desk.pages.dev/llms.txt"><strong>llms.txt</strong><span>Plain-text summary for language models.</span></a></li>
+              <li><a href="https://sperax-trading-desk.pages.dev/llms-full.txt"><strong>llms-full.txt</strong><span>Every tool with its full description and parameters.</span></a></li>
+              <li><a href="https://sperax-trading-desk.pages.dev/.well-known/mcp/server-card.json"><strong>server-card.json</strong><span>MCP server card with transport and capabilities.</span></a></li>
+              <li><a href="https://sperax-trading-desk.pages.dev/server.json"><strong>server.json</strong><span>MCP registry entry, published as io.github.nirholas/sperax-trading-desk.</span></a></li>
+            </ul>
+          </div>
+          <p class="tiny">Machine-readable</p>
+        </div>
+        <h3>Readable by machines.</h3>
+        <p>llms.txt, an MCP server card and a registry entry, so assistants can find and describe the server correctly.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="feeds" class="section">
+  <div class="wrap">
+    <div class="split-head">
+      <div>
+        <p class="eyebrow">35 market feeds</p>
+        <h2 class="h2-sm">One tool per live data set<span class="dot">.</span></h2>
+      </div>
+      <div class="split-aside"><p>Hover a feed for what it returns, or open it in the reference for every parameter.</p></div>
+    </div>
+    <ul class="feed-list">
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_fear_greed_index" title="Returns the current 0-100 index with its label and daily history."><span>Fear &amp; Greed Index</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_market_regime" title="Returns seven macro signals (liquidity, ETF flows, trend, hashrate, mining cost, sentiment) with a composite regime read, plus Fear &amp; Greed and global market cap."><span>market regime</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_macro_dashboard" title="Returns the dollar index, Treasury yields, equity indices, gold and oil with their correlation to crypto."><span>macro dashboard</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_traditional_market_chart" title="Returns three months of daily prices from Yahoo Finance."><span>traditional market chart</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_crypto_stock_quotes" title="Returns real-time quotes with daily change from Finnhub."><span>crypto stock quotes</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_market_intelligence" title="Returns a digest of narratives, sector rotation and notable moves."><span>market intelligence</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_market_sentiment" title="Returns a sentiment read per coin aggregated from news and social sources."><span>market sentiment</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_global_market_stats" title="Returns global market totals with 24h change."><span>global market stats</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_top_coins" title="Returns ranked coins with price, market cap, volume and 1h, 24h and 7d change."><span>top coins</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_trending_coins" title="Returns trending coins on CoinGecko and trending DEX pairs."><span>trending coins</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_whale_alerts" title="Returns recent large on-chain transfers and exchange deposits and withdrawals."><span>whale alerts</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_exchange_flows" title="Returns exchange net flows for BTC and ETH."><span>exchange flows</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_tracked_wallet_activity" title="Returns recent transactions and holdings for up to 10 wallets on one chain."><span>tracked wallet activity</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_gas_prices" title="Returns current gas prices per network."><span>gas prices</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_bitcoin_network_stats" title="Covers the Bitcoin network: mempool fees, the latest block, hashrate or the next difficulty adjustment."><span>Bitcoin network stats</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_new_dex_listings" title="Returns recent DEX listings with liquidity and price momentum."><span>new DEX listings</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_funding_rates" title="Returns perpetual funding rates per coin and exchange."><span>funding rates</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_open_interest" title="Returns open interest by coin and exchange with 24h change."><span>open interest</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_liquidations" title="Returns recent long and short liquidations by coin and exchange."><span>liquidations</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_long_short_ratios" title="Returns long/short account ratios per coin and exchange."><span>long/short ratios</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_options_overview" title="Returns options open interest, put/call ratio, max pain and implied volatility."><span>options overview</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_etf_flows" title="Returns daily net flows and holdings by ETF issuer."><span>ETF flows</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_dex_volumes" title="Returns DEX volume by protocol and chain with 24h and 7d change."><span>DEX volumes</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_defi_overview" title="Returns total value locked across DeFi with dominance and 24h change."><span>DeFi overview</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_chain_tvl" title="Returns total value locked per chain with change."><span>TVL by chain</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_top_defi_protocols" title="Returns protocols ranked by total value locked with category, chains and change."><span>top DeFi protocols</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_protocol_revenue" title="Returns protocol fee and revenue rankings."><span>protocol revenue</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_defi_yields" title="Returns pools ranked by APY with TVL, chain and project, above a TVL floor."><span>DeFi yields</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_stablecoin_stats" title="Returns stablecoin supply, dominance, chain distribution and peg health."><span>stablecoin stats</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_bridge_flows" title="Returns bridge volumes and net flows per chain."><span>bridge flows</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_token_unlocks" title="Returns unlocks scheduled in the next 30 days, ranked by value."><span>token unlocks</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_governance_proposals" title="Returns active governance proposals across major protocols."><span>governance proposals</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_onchain_ai_agents" title="Returns registered agents with their identity and reputation data."><span>on-chain AI agents</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_crypto_news" title="Returns recent articles with source, time and summary."><span>crypto news</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+<li><a href="https://sperax-trading-desk.pages.dev/tools#get_sperax_protocol_stats" title="Returns USDs supply, peg and auto-yield APY, SPA price, staking, farms and buybacks, and optionally one wallet’s USDs earnings."><span>Sperax protocol stats</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></li>
+    </ul>
+  </div>
+</section>
+
+<section id="install" class="section">
+  <div class="wrap">
+    <div class="split-head">
+      <div>
+        <p class="eyebrow">Install</p>
+        <h2 class="h2-sm">ChatGPT, or any MCP client<span class="dot">.</span></h2>
+      </div>
+      <div class="split-aside"><p>One endpoint, streamable HTTP, no auth. Pick your client and paste.</p></div>
+    </div>
+    <div class="install-grid">
+<div class="icard" id="install-chatgpt">
+  <h3>ChatGPT</h3>
+  <p>Open the listing in the ChatGPT plugin directory and add it.</p>
+  <ul class="checks"><li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>43 tools, all read-only</span></li><li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Interactive cards from 4 tools</span></li><li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>No sign-in, no API key</span></li><li><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg><span>Live server 2.1.23, MCP 2025-06-18</span></li></ul>
+  
+  <div class="actions"><a class="btn btn-lime btn-sm" href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c"><span>Add to ChatGPT</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></div>
+</div>
+<div class="icard" id="install-claude-code">
+  <h3>Claude Code</h3>
+  <p>Run once in a terminal.</p>
+  
+  <div class="code"><pre><code>claude mcp add --transport http sperax-trading-desk https://chat.sperax.io/webapi/mcp/trading-copilot</code></pre><button class="copy" type="button" aria-label="Copy Claude Code setup">Copy</button></div>
+  
+</div>
+<div class="icard" id="install-claude-desktop">
+  <h3>Claude Desktop</h3>
+  <p>Add a custom connector with the endpoint URL in Settings → Connectors, or put this in claude_desktop_config.json.</p>
+  
+  <div class="code"><pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;sperax-trading-desk&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [
+        &quot;-y&quot;,
+        &quot;mcp-remote&quot;,
+        &quot;https://chat.sperax.io/webapi/mcp/trading-copilot&quot;
+      ]
+    }
+  }
+}</code></pre><button class="copy" type="button" aria-label="Copy Claude Desktop setup">Copy</button></div>
+  
+</div>
+<div class="icard" id="install-cursor">
+  <h3>Cursor</h3>
+  <p>One click, or add to ~/.cursor/mcp.json.</p>
+  
+  <div class="code"><pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;sperax-trading-desk&quot;: {
+      &quot;url&quot;: &quot;https://chat.sperax.io/webapi/mcp/trading-copilot&quot;
+    }
+  }
+}</code></pre><button class="copy" type="button" aria-label="Copy Cursor setup">Copy</button></div>
+  <div class="actions"><a class="btn btn-ghost btn-sm" href="https://cursor.com/install-mcp?name=sperax-trading-desk&amp;config=eyJ1cmwiOiJodHRwczovL2NoYXQuc3BlcmF4LmlvL3dlYmFwaS9tY3AvdHJhZGluZy1jb3BpbG90In0="><span>Add to Cursor</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></div>
+</div>
+<div class="icard" id="install-vscode">
+  <h3>VS Code</h3>
+  <p>One click, or add to .vscode/mcp.json.</p>
+  
+  <div class="code"><pre><code>{
+  &quot;servers&quot;: {
+    &quot;sperax-trading-desk&quot;: {
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://chat.sperax.io/webapi/mcp/trading-copilot&quot;
+    }
+  }
+}</code></pre><button class="copy" type="button" aria-label="Copy VS Code setup">Copy</button></div>
+  <div class="actions"><a class="btn btn-ghost btn-sm" href="https://insiders.vscode.dev/redirect/mcp/install?name=sperax-trading-desk&amp;config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fchat.sperax.io%2Fwebapi%2Fmcp%2Ftrading-copilot%22%7D"><span>Add to VS Code</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></div>
+</div>
+<div class="icard" id="install-windsurf">
+  <h3>Windsurf</h3>
+  <p>Add to ~/.codeium/windsurf/mcp_config.json.</p>
+  
+  <div class="code"><pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;sperax-trading-desk&quot;: {
+      &quot;serverUrl&quot;: &quot;https://chat.sperax.io/webapi/mcp/trading-copilot&quot;
+    }
+  }
+}</code></pre><button class="copy" type="button" aria-label="Copy Windsurf setup">Copy</button></div>
+  
+</div>
+<div class="icard" id="install-gemini-cli">
+  <h3>Gemini CLI</h3>
+  <p>Add to ~/.gemini/settings.json.</p>
+  
+  <div class="code"><pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;sperax-trading-desk&quot;: {
+      &quot;httpUrl&quot;: &quot;https://chat.sperax.io/webapi/mcp/trading-copilot&quot;
+    }
+  }
+}</code></pre><button class="copy" type="button" aria-label="Copy Gemini CLI setup">Copy</button></div>
+  
+</div>
+<div class="icard" id="install-codex">
+  <h3>Codex CLI</h3>
+  <p>Add to ~/.codex/config.toml.</p>
+  
+  <div class="code"><pre><code>[mcp_servers.sperax-trading-desk]
+url = &quot;https://chat.sperax.io/webapi/mcp/trading-copilot&quot;</code></pre><button class="copy" type="button" aria-label="Copy Codex CLI setup">Copy</button></div>
+  
+</div>
+<div class="icard" id="install-curl">
+  <h3>Raw JSON-RPC</h3>
+  <p>Streamable HTTP, no auth. 120 requests per minute per IP.</p>
+  
+  <div class="code"><pre><code>curl -s https://chat.sperax.io/webapi/mcp/trading-copilot \
+  -H &#39;content-type: application/json&#39; \
+  -H &#39;accept: application/json, text/event-stream&#39; \
+  -d &#39;{&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;get_fear_greed_index&quot;,&quot;arguments&quot;:{}}}&#39;</code></pre><button class="copy" type="button" aria-label="Copy Raw JSON-RPC setup">Copy</button></div>
+  
+</div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <div class="wrap">
+    <div class="panel panel-green split">
+      <div>
+        <p class="eyebrow">Built by Sperax</p>
+        <h2 class="h2-sm">Building in crypto since 2019<span class="dot">.</span></h2>
+        <p class="lead-sm">Sperax created USDs, the auto-yield stablecoin, and SperaxOS, the AI agent workspace that serves these tools. Sperax is in a strategic partnership with Microsoft through the Microsoft AI Cloud Partner Program, and SperaxOS is available on Microsoft Marketplace.</p>
+        <p class="links"><a href="https://www.sperax.io">sperax.io<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a><a href="https://x.com/SperaxUSD">X<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a><a href="https://t.me/SperaxUSD">Telegram<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a><a href="https://github.com/Sperax">GitHub<svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a></p>
+      </div>
+      <ul class="facts">
+        <li><img src="https://sperax-trading-desk.pages.dev/icon-192.png" alt="Sperax logo" width="42" height="42"></li>
+        <li><strong>2019</strong><span>Building in crypto since</span></li>
+        <li><strong>$17M</strong><span>Raised</span></li>
+        <li><strong>Microsoft</strong><span>Strategic partner through the AI Cloud Partner Program</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="section faq-section">
+  <div class="wrap faq-split">
+    <h2 class="h2-sm">Questions?</h2>
+    <div class="faq">
+      <details><summary>What is Sperax Trading Desk?<span class="plus" aria-hidden="true"></span></summary><p>Sperax Trading Desk gives crypto traders read-only analysis tools that check an idea against real numbers before they act on it anywhere else. It is live in the ChatGPT plugin directory and works in any MCP client.</p></details>
+      <details><summary>Can it place trades or move my funds?<span class="plus" aria-hidden="true"></span></summary><p>No. Every tool is read-only. It does not connect to exchange accounts, place orders, build transactions or sign anything, and it never asks for keys or seed phrases.</p></details>
+      <details><summary>Do I need an account or an API key?<span class="plus" aria-hidden="true"></span></summary><p>No. The plugin and the MCP endpoint need no sign-in. Each IP may send 120 requests per minute.</p></details>
+      <details><summary>What does it cost?<span class="plus" aria-hidden="true"></span></summary><p>Nothing. The plugin and the endpoint are free to use.</p></details>
+      <details><summary>Where does the data come from?<span class="plus" aria-hidden="true"></span></summary><p>Public market sources, including OKX and Hyperliquid for derivatives, CoinGecko for prices, LI.FI, KyberSwap and Jupiter for swap quotes, Yahoo Finance and Finnhub for traditional markets, and on-chain data for token scans and wallet reviews. Responses are cached for 60 seconds to 15 minutes.</p></details>
+      <details><summary>Can I use it outside ChatGPT?<span class="plus" aria-hidden="true"></span></summary><p>Yes. Point any MCP client that supports remote streamable-HTTP servers at https://chat.sperax.io/webapi/mcp/trading-copilot. Setup for Claude, Cursor, VS Code, Windsurf, Gemini CLI and Codex is above.</p></details>
+      <details><summary>Is it financial advice?<span class="plus" aria-hidden="true"></span></summary><p>No. Results are educational analysis built from public data. Backtests use daily candles, and past performance does not predict future results.</p></details>
+      <details><summary>Who builds it?<span class="plus" aria-hidden="true"></span></summary><p>Sperax, the team behind USDs and SperaxOS. Sperax has been building since 2019, has raised $17M and is in a strategic partnership with Microsoft.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="section-cta" aria-labelledby="cta-title">
+  <div class="wrap">
+    <div class="cta-band">
+      <h2 id="cta-title">Check the trade.<br>Before you take it<span class="dot">.</span></h2>
+      <p>Free in ChatGPT and in any MCP client. No sign-in, no keys.</p>
+      <div class="cta">
+        <a class="btn btn-lime" href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c"><span>Add to ChatGPT</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6.5 5H11v4.5"/></svg></a>
+        <a class="btn btn-outline-light" href="#install"><span>Install in any MCP client</span><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="https://sperax-trading-desk.pages.dev/" aria-label="Sperax Trading Desk home"><img src="https://sperax-trading-desk.pages.dev/logo.svg" alt="" width="113" height="24"><span>Trading Desk</span></a>
+        <p>Read-only crypto analysis for ChatGPT and any MCP client. Version 2.0.0.</p>
+      </div>
+      <nav aria-label="Product"><p class="tiny">Product</p><a href="https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c">ChatGPT listing</a><a href="https://sperax-trading-desk.pages.dev/tools">Tool reference</a><a href="https://sperax-trading-desk.pages.dev/#install">Install</a><a href="https://sperax-trading-desk.pages.dev/#faq">FAQ</a></nav>
+      <nav aria-label="For agents"><p class="tiny">For agents</p><a href="https://sperax-trading-desk.pages.dev/llms.txt">llms.txt</a><a href="https://sperax-trading-desk.pages.dev/llms-full.txt">llms-full.txt</a><a href="https://sperax-trading-desk.pages.dev/.well-known/mcp/server-card.json">MCP server card</a><a href="https://sperax-trading-desk.pages.dev/server.json">server.json</a></nav>
+      <nav aria-label="Project"><p class="tiny">Project</p><a href="https://github.com/Sperax/chatgpt-plugin">Source</a><a href="https://github.com/Sperax/chatgpt-plugin/security/policy">Security</a><a href="https://chat.sperax.io/support">Support</a><a href="https://chat.sperax.io/privacy">Privacy</a><a href="https://chat.sperax.io/terms">Terms</a></nav>
+      <nav aria-label="Sperax"><p class="tiny">Sperax</p><a href="https://www.sperax.io">sperax.io</a><a href="https://x.com/SperaxUSD">X</a><a href="https://t.me/SperaxUSD">Telegram</a><a href="https://github.com/Sperax">GitHub</a></nav>
+    </div>
+    <p class="fine">© 2026 Sperax. Code licensed under Apache-2.0. Sperax and the Sperax logo are trademarks of Sperax. ChatGPT is a trademark of OpenAI. Nothing on this site or returned by the tools is financial advice.</p>
+  </div>
+</footer>
+</body>
+</html>

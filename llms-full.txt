@@ -1,0 +1,529 @@
+# Sperax Trading Desk
+
+> Sperax Trading Desk gives crypto traders read-only analysis tools that check an idea against real numbers before they act on it anywhere else.
+
+Derivatives positioning reads live perpetual futures data for a coin from OKX and Hyperliquid: funding, open interest, long/short ratios and mark price. It labels the market crowded-long, crowded-short or neutral and flags squeeze risk.
+
+Coin analysis reads 200 or more daily or 4-hour candles for trend, RSI, MACD, volume, support and resistance and ATR stops, adds futures positioning, and returns a scored verdict with reasons and a plan outline.
+
+Trade planning sizes a position from account size, entry, stop and risk percentage, with fees included. It returns units, notional and margin, R-multiples, breakeven win rate, expectancy and half-Kelly, and warns when leverage would liquidate a position before its stop.
+
+Strategy backtesting simulates RSI, moving-average, MACD and Bollinger Band rules on one to three coins over 30 to 365 days of daily prices, with fees, slippage and gas, and compares the result with buy-and-hold and Bitcoin.
+
+Market data tools return 35 live data sets, one tool each: fear and greed, market regime, macro, liquidations, funding, open interest, options, ETF flows, whale alerts, exchange flows, trending coins, new listings, DeFi TVL, yields, stablecoins, bridges, token unlocks, governance, crypto news and Sperax protocol stats.
+
+Token scans check a symbol or contract for honeypots, buy and sell tax, mint and owner powers, holder concentration, liquidity and pair age, and return a safe, caution or danger verdict with reasons.
+
+Quote comparison prices the same swap on LI.FI, KyberSwap and Jupiter and lists the routes by output, price impact and gas, so the user can see what a trade would cost before deciding where to place it.
+
+Wallet review reads a public EVM or Solana address and reports holdings, concentration, token approvals with a link to review them on revoke.cash, safety scans of the largest holdings and a crisis stress test, ending in a healthy, attention or at-risk verdict.
+
+Stress testing replays a list of holdings through recorded crises such as FTX, LUNA and the 2020 COVID crash, with drawdown, dollar loss, the biggest losers, VaR and CVaR.
+
+Who it is for: spot and perpetual futures traders who want disciplined sizing, a read on leverage in the market, and evidence before they trust a systematic idea.
+
+Limitations: it does not connect to exchange accounts, hold funds, place orders, build transactions or sign anything. Market data is public and can be delayed or briefly unavailable when a venue does not answer. Backtests use daily candles only, so they cannot test intraday rules, order-book effects or leverage. Past performance does not predict future results. Nothing it returns is financial advice.
+
+## Connection
+
+- MCP endpoint: https://chat.sperax.io/webapi/mcp/trading-copilot
+- Transport: streamable HTTP (JSON-RPC 2.0 over POST; GET answers 405)
+- Protocol version: 2025-06-18
+- Server: sperax-trading-copilot 2.1.23
+- Authentication: none
+- Rate limit: 120 requests per 60 seconds per client IP; over the limit the endpoint answers 429 with Retry-After
+- Caching: responses are cached for 60 seconds to 15 minutes per argument set
+- ChatGPT listing: https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c
+- Source and manifest: https://github.com/Sperax/chatgpt-plugin
+
+## Server instructions
+
+Sperax Trading Desk tools are read-only. They return crypto market data and analysis and cannot place orders, sign transactions or move funds. For a trade plan on a coin, call analyze_coin first and pass its planSeed to build_trade_plan. Results are educational analysis, not financial advice, and backtest or stress-test results describe past data, not future performance.
+
+## Install
+
+### ChatGPT
+
+Open the listing in the ChatGPT plugin directory and add it.
+
+Add to ChatGPT: https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c
+
+### Claude Code
+
+Run once in a terminal.
+
+```
+claude mcp add --transport http sperax-trading-desk https://chat.sperax.io/webapi/mcp/trading-copilot
+```
+
+### Claude Desktop
+
+Add a custom connector with the endpoint URL in Settings → Connectors, or put this in claude_desktop_config.json.
+
+```
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://chat.sperax.io/webapi/mcp/trading-copilot"
+      ]
+    }
+  }
+}
+```
+
+### Cursor
+
+One click, or add to ~/.cursor/mcp.json.
+
+Add to Cursor: https://cursor.com/install-mcp?name=sperax-trading-desk&config=eyJ1cmwiOiJodHRwczovL2NoYXQuc3BlcmF4LmlvL3dlYmFwaS9tY3AvdHJhZGluZy1jb3BpbG90In0=
+
+```
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "url": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+### VS Code
+
+One click, or add to .vscode/mcp.json.
+
+Add to VS Code: https://insiders.vscode.dev/redirect/mcp/install?name=sperax-trading-desk&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fchat.sperax.io%2Fwebapi%2Fmcp%2Ftrading-copilot%22%7D
+
+```
+{
+  "servers": {
+    "sperax-trading-desk": {
+      "type": "http",
+      "url": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add to ~/.codeium/windsurf/mcp_config.json.
+
+```
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "serverUrl": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+### Gemini CLI
+
+Add to ~/.gemini/settings.json.
+
+```
+{
+  "mcpServers": {
+    "sperax-trading-desk": {
+      "httpUrl": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+    }
+  }
+}
+```
+
+### Codex CLI
+
+Add to ~/.codex/config.toml.
+
+```
+[mcp_servers.sperax-trading-desk]
+url = "https://chat.sperax.io/webapi/mcp/trading-copilot"
+```
+
+### Raw JSON-RPC
+
+Streamable HTTP, no auth. 120 requests per minute per IP.
+
+```
+curl -s https://chat.sperax.io/webapi/mcp/trading-copilot \
+  -H 'content-type: application/json' \
+  -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_fear_greed_index","arguments":{}}}'
+```
+
+## Analysis tools
+
+### get_derivatives_positioning
+
+Get derivatives positioning. Use this when the user asks about leverage, funding, open interest, crowding or squeeze risk for a crypto perpetual. Returns OKX and Hyperliquid funding (8h and annualized), open interest and its 24h change, global and top-trader long/short ratios, and a crowding, open-interest-regime and squeeze-risk read. Only covers tickers listed as USDT perpetuals on OKX or as perpetuals on Hyperliquid; it does not cover spot-only tokens, options or other venues.
+
+Parameters:
+- `symbol` (string, required): Ticker symbol such as BTC, ETH or SOL (letters and digits only). [min length 1, max length 15, pattern ^[A-Za-z0-9]+$]
+
+### build_trade_plan
+
+Build trade plan. Use this when the user has a trade idea with an entry and a stop and needs a position size, or asks how much to buy, what leverage is safe, or whether a setup is worth taking. Returns the size that loses exactly riskPct of the account at the stop with fees included, notional and margin, the R-multiple and net P&L of each target, the breakeven win rate, expectancy and half-Kelly when winProbability is given, and whether leverage would liquidate the position before the stop. It is arithmetic on the numbers supplied: it does not fetch prices, judge the setup or place orders.
+
+Parameters:
+- `accountSize` (number, required): Account equity in USD. [> 0]
+- `entry` (number, required) [> 0]
+- `feePct` (number): Taker fee per side in percent (0.05 = 0.05%). [default 0.05, ≥ 0, ≤ 1]
+- `leverage` (number) [default 1, ≥ 1, ≤ 200]
+- `maintenanceMarginPct` (number): Venue maintenance margin in percent. [default 0.5, ≥ 0, ≤ 10]
+- `riskPct` (number): Percent of the account lost if the stop is hit. [default 1, > 0, ≤ 100]
+- `side` ("long" | "short", required)
+- `stop` (number, required) [> 0]
+- `targets` (array of objects): Up to 5 take-profit levels. Give allocationPct on all (summing to 100) or none (split evenly). [max 5 items]
+- `targets[].allocationPct` (number) [> 0, ≤ 100]
+- `targets[].price` (number, required) [> 0]
+- `winProbability` (number): Estimated chance of reaching the targets, between 0 and 1 (exclusive). [> 0, < 1]
+
+### backtest_signal_strategy
+
+Backtest signal strategy. Use this when the user proposes a rule-based strategy (RSI, moving-average, MACD or Bollinger conditions) and wants to know how it would have performed. Simulates the strategy on 1-3 coins over 30-365 days of daily prices with fees, slippage and gas, and returns total and annualized return, max drawdown, Sharpe, win rate, profit factor, recent trades, a sampled equity curve and buy-and-hold and BTC benchmarks. Daily candles only: it cannot test intraday rules, order-book effects or leverage, and past performance does not predict future results.
+
+Parameters:
+- `coins` (array of string, required): CoinGecko coin IDs, lowercase and hyphenated: bitcoin, ethereum, solana, avalanche-2. [min 1 item, max 3 items]
+- `costs` (object): Execution costs as fractions (0.003 = 0.3%). Defaults: fee 0.003, slippage 0.001, gas 2 USD per trade.
+- `days` (integer) [default 180, ≥ 30, ≤ 365]
+- `initialCapital` (number) [default 10000, ≥ 100, ≤ 100000000]
+- `rebalanceFrequency` ("daily" | "weekly" | "monthly"): Cadence for dca and rebalance strategies. [default "weekly"]
+- `strategy` (object, required): Signal spec. Entry fires when all entryConditions hold, exit when any exitCondition holds. Example RSI dip-buy: indicators [{id:"RSI_14",type:"RSI",params:[14]}], entry [{indicator:"RSI",operator:"<",params:[14],value:30}], exit [{indicator:"RSI",operator:">",params:[14],value:70}].
+
+### scan_token
+
+Scan token safety. Use this when the user asks whether a token is safe, or mentions a small cap, new launch or unfamiliar contract. Works by symbol or contract on any EVM chain or Solana and checks honeypot, buy and sell tax, mint and owner powers, holder concentration, liquidity and pair age, returning a safe, caution or danger verdict with flags.
+
+Parameters:
+- `token` (string, required): Token symbol or contract address. [max length 100]
+- `chain` (string): Chain of the token, such as ethereum, base, bsc or solana. Inferred when omitted. [max length 40]
+
+### compare_swap_quotes
+
+Compare swap quotes. Use this when the user wants to compare swap rates for a token pair across DEX aggregators. Fetches live quotes from LI.FI, KyberSwap and Jupiter for any token on any chain and ranks them by output, with USD value, price impact, gas and the gap to the top quote. Give exactly one of amountUsd or sellAmount. Read-only: returns quotes, not transactions or links.
+
+Parameters:
+- `buyToken` (string, required): Token to buy: symbol (SPA, ETH, BONK) or contract address. [max length 100]
+- `chain` (string): Chain of buyToken, such as arbitrum, base or solana. Inferred when omitted. [max length 40]
+- `amountUsd` (number): USD value to spend (1-100000). Give this or sellAmount. [≥ 1, ≤ 100000]
+- `sellAmount` (number): Amount of sellToken in token units. Give this or amountUsd. [> 0]
+- `sellToken` (string): Token to pay with. Defaults to USDC on the sell chain. [max length 100]
+- `sellChain` (string): Chain sellToken is paid from when it differs from the buy chain. [max length 40]
+- `slippagePct` (number): Maximum slippage in percent (0.5 = 0.5%). [default 0.5, ≥ 0.05, ≤ 5]
+
+### review_wallet
+
+Review wallet. Use this when the user shares a wallet address or asks whether their wallet or portfolio is in good shape. Reviews an EVM or Solana wallet: holdings and concentration, risky token approvals with revoke links, safety scans of held tokens and crisis-scenario drawdowns, ranked into findings with a healthy, attention or at_risk verdict. Read-only; it never touches funds.
+
+Parameters:
+- `address` (string, required): Wallet address: 0x EVM address or Solana base58 address. [max length 64]
+- `includeStress` (boolean): Include the crisis stress test of the holdings. [default true]
+
+### stress_test_portfolio
+
+Stress test portfolio. Use this when the user asks how bad a portfolio could get, wants a crash or crisis test, or asks about portfolio risk. Replays the holdings through real crypto crises (2025 tariff shock, yen carry unwind, SVB and USDC depeg, FTX, LUNA, May 2021 deleveraging, COVID crash) and returns drawdown, dollar loss and top losers per scenario, plus optional VaR, CVaR and risk contribution.
+
+Parameters:
+- `holdings` (array of objects, required): Positions by ticker and USD value, e.g. [{symbol:"BTC",valueUsd:5000}]. [min 1 item, max 500 items]
+- `holdings[].symbol` (string, required) [min length 1, max length 32]
+- `holdings[].valueUsd` (number, required) [≥ 0]
+- `includeRisk` (boolean): Add VaR, CVaR, volatility and per-asset risk contribution.
+- `scenarioIds` (array of "tariff-shock-2025" | "yen-carry-unwind" | "svb-usdc-depeg" | "ftx-collapse" | "luna-collapse" | "may-2021-deleveraging" | "covid-crash"): Limit to these scenarios. Omit for all. [min 1 item, items: "tariff-shock-2025", "yen-carry-unwind", "svb-usdc-depeg", "ftx-collapse", "luna-collapse", "may-2021-deleveraging", "covid-crash"]
+
+### analyze_coin
+
+Analyze coin. Use this when the user asks what a coin's chart looks like, whether it is bullish or bearish, or where to enter, stop or take profit. Returns EMA 20/50/200 trend, RSI, MACD, ATR, swing support and resistance, volume and perp positioning folded into a verdict with reasons and a plan seed (entry, ATR stop, targets) to pass to build_trade_plan. Covers coins with OKX USDT or Hyperliquid markets; it is one technical input, not a signal or advice.
+
+Parameters:
+- `symbol` (string, required): Ticker symbol, e.g. BTC, ETH, SOL. [min length 1, max length 15, pattern ^[A-Za-z0-9]+$]
+- `interval` ("1d" | "4h"): Candle interval. [default "1d"]
+
+## Market feed tools
+
+### get_fear_greed_index
+
+Get Fear & Greed Index. Use this when the user asks about the Crypto Fear & Greed Index or overall market mood. Returns the current 0-100 index with its label and daily history.
+
+Parameters:
+- `days` (integer): Number of days of history to return, 1-30 (default 7). [≥ 1, ≤ 30]
+
+### get_market_regime
+
+Get market regime. Use this when the user asks whether the broad crypto market is risk-on or risk-off. Returns seven macro signals (liquidity, ETF flows, trend, hashrate, mining cost, sentiment) with a composite regime read, plus Fear & Greed and global market cap.
+
+Parameters: none.
+
+### get_macro_dashboard
+
+Get macro dashboard. Use this when the user asks how macro conditions affect crypto. Returns the dollar index, Treasury yields, equity indices, gold and oil with their correlation to crypto.
+
+Parameters: none.
+
+### get_traditional_market_chart
+
+Get traditional market chart. Use this when the user asks about the price history of a stock index, ETF, commodity or volatility index such as SPY, ^VIX or gold. Returns three months of daily prices from Yahoo Finance.
+
+Parameters:
+- `symbol` (string, required): Yahoo Finance symbol, e.g. SPY, QQQ, ^VIX, DX-Y.NYB or GC=F. [max length 20, pattern ^[A-Za-z0-9^=.-]+$]
+
+### get_crypto_stock_quotes
+
+Get crypto stock quotes. Use this when the user asks about crypto-related stocks such as Coinbase, MicroStrategy, Robinhood or the IBIT ETF. Returns real-time quotes with daily change from Finnhub.
+
+Parameters:
+- `symbols` (string): Comma-separated stock tickers (default COIN,MSTR,HOOD,IBIT). [max length 100, pattern ^[A-Za-z0-9., -]+$]
+
+### get_market_intelligence
+
+Get market intelligence. Use this when the user asks which narratives or sectors are moving in crypto. Returns a digest of narratives, sector rotation and notable moves.
+
+Parameters: none.
+
+### get_market_sentiment
+
+Get market sentiment. Use this when the user asks about sentiment toward Bitcoin, Ethereum or other major coins. Returns a sentiment read per coin aggregated from news and social sources.
+
+Parameters: none.
+
+### get_global_market_stats
+
+Get global market stats. Use this when the user asks about total crypto market cap, trading volume or Bitcoin and Ethereum dominance. Returns global market totals with 24h change.
+
+Parameters: none.
+
+### get_top_coins
+
+Get top coins. Use this when the user asks for the largest coins, a market overview or the top movers by market cap or volume. Returns ranked coins with price, market cap, volume and 1h, 24h and 7d change.
+
+Parameters:
+- `limit` (integer): Number of coins to return, 1-250 (default 50). [≥ 1, ≤ 250]
+- `sort` ("market_cap_desc" | "volume_desc"): Ranking order: market_cap_desc (default) or volume_desc.
+
+### get_trending_coins
+
+Get trending coins. Use this when the user asks what coins are trending or getting attention right now. Returns trending coins on CoinGecko and trending DEX pairs.
+
+Parameters: none.
+
+### get_whale_alerts
+
+Get whale alerts. Use this when the user asks about whale activity or large crypto transfers. Returns recent large on-chain transfers and exchange deposits and withdrawals.
+
+Parameters: none.
+
+### get_exchange_flows
+
+Get exchange flows. Use this when the user asks whether Bitcoin or Ether is flowing into or out of exchanges. Returns exchange net flows for BTC and ETH.
+
+Parameters: none.
+
+### get_tracked_wallet_activity
+
+Get tracked wallet activity. Use this when the user wants to follow the recent activity of several wallet addresses at once. Returns recent transactions and holdings for up to 10 wallets on one chain. For a full review of a single wallet use review_wallet.
+
+Parameters:
+- `chain` (string): Chain of the wallets, e.g. ethereum, base or arbitrum (default ethereum). [max length 32, pattern ^[A-Za-z0-9-]+$]
+- `wallets` (string, required): Comma-separated wallet addresses, up to 10. [max length 500, pattern ^[A-Za-z0-9, ]+$]
+
+### get_gas_prices
+
+Get gas prices. Use this when the user asks about gas fees or transaction costs on Ethereum or its layer 2 networks. Returns current gas prices per network.
+
+Parameters: none.
+
+### get_bitcoin_network_stats
+
+Get Bitcoin network stats. Use this when the user asks about the Bitcoin network: mempool fees, the latest block, hashrate or the next difficulty adjustment. Returns those network stats with the BTC price.
+
+Parameters: none.
+
+### get_new_dex_listings
+
+Get new DEX listings. Use this when the user asks about newly launched tokens or new DEX pairs. Returns recent DEX listings with liquidity and price momentum. New listings are high risk; check any of them with scan_token.
+
+Parameters:
+- `chain` (string): Chain slug, e.g. solana, base, ethereum or bsc. Omit for all chains. [max length 32, pattern ^[A-Za-z0-9-]+$]
+- `limit` (integer): Number of listings to return, 1-100 (default 25). [≥ 1, ≤ 100]
+
+### get_funding_rates
+
+Get funding rates. Use this when the user asks how funding rates compare across major coins and exchanges. Returns perpetual funding rates per coin and exchange. For one coin in depth use get_derivatives_positioning.
+
+Parameters: none.
+
+### get_open_interest
+
+Get open interest. Use this when the user asks about open interest across the crypto futures market. Returns open interest by coin and exchange with 24h change.
+
+Parameters: none.
+
+### get_liquidations
+
+Get liquidations. Use this when the user asks about recent liquidations or a liquidation cascade. Returns recent long and short liquidations by coin and exchange.
+
+Parameters: none.
+
+### get_long_short_ratios
+
+Get long/short ratios. Use this when the user asks whether traders are mostly long or short across the market. Returns long/short account ratios per coin and exchange.
+
+Parameters: none.
+
+### get_options_overview
+
+Get options overview. Use this when the user asks about Bitcoin or Ether options. Returns options open interest, put/call ratio, max pain and implied volatility.
+
+Parameters: none.
+
+### get_etf_flows
+
+Get ETF flows. Use this when the user asks about spot Bitcoin or Ether ETF flows. Returns daily net flows and holdings by ETF issuer.
+
+Parameters: none.
+
+### get_dex_volumes
+
+Get DEX volumes. Use this when the user asks about decentralized exchange trading volume. Returns DEX volume by protocol and chain with 24h and 7d change.
+
+Parameters: none.
+
+### get_defi_overview
+
+Get DeFi overview. Use this when the user asks about the overall size of DeFi. Returns total value locked across DeFi with dominance and 24h change.
+
+Parameters: none.
+
+### get_chain_tvl
+
+Get TVL by chain. Use this when the user asks which blockchains hold the most value or where capital is moving between chains. Returns total value locked per chain with change.
+
+Parameters: none.
+
+### get_top_defi_protocols
+
+Get top DeFi protocols. Use this when the user asks for the largest DeFi protocols. Returns protocols ranked by total value locked with category, chains and change.
+
+Parameters:
+- `limit` (integer): Number of protocols to return, 1-100 (default 25). [≥ 1, ≤ 100]
+
+### get_protocol_revenue
+
+Get protocol revenue. Use this when the user asks which DeFi protocols earn the most fees or revenue. Returns protocol fee and revenue rankings.
+
+Parameters: none.
+
+### get_defi_yields
+
+Get DeFi yields. Use this when the user asks about DeFi yields or APY on lending, liquidity or vault pools. Returns pools ranked by APY with TVL, chain and project, above a TVL floor. Yields are variable and carry smart-contract risk.
+
+Parameters:
+- `limit` (integer): Number of pools to return, 1-100 (default 25). [≥ 1, ≤ 100]
+
+### get_stablecoin_stats
+
+Get stablecoin stats. Use this when the user asks about stablecoin supply, market share or peg stability. Returns stablecoin supply, dominance, chain distribution and peg health.
+
+Parameters: none.
+
+### get_bridge_flows
+
+Get bridge flows. Use this when the user asks about cross-chain bridge activity or which chains are gaining capital. Returns bridge volumes and net flows per chain.
+
+Parameters: none.
+
+### get_token_unlocks
+
+Get token unlocks. Use this when the user asks about upcoming token unlocks or vesting releases. Returns unlocks scheduled in the next 30 days, ranked by value.
+
+Parameters: none.
+
+### get_governance_proposals
+
+Get governance proposals. Use this when the user asks about DAO votes or governance proposals. Returns active governance proposals across major protocols.
+
+Parameters:
+- `limit` (integer): Number of proposals to return, 1-50 (default 20). [≥ 1, ≤ 50]
+
+### get_onchain_ai_agents
+
+Get on-chain AI agents. Use this when the user asks about on-chain AI agents registered under ERC-8004, the Ethereum standard for agent identity and reputation. Returns registered agents with their identity and reputation data.
+
+Parameters:
+- `chain` (string): Chain name, e.g. base or ethereum. Omit for all supported chains. [max length 32, pattern ^[A-Za-z0-9-]+$]
+- `limit` (integer): Number of agents to return, 1-50 (default 20). [≥ 1, ≤ 50]
+
+### get_crypto_news
+
+Get crypto news. Use this when the user asks for crypto news or headlines, optionally about one coin or category. Returns recent articles with source, time and summary.
+
+Parameters:
+- `category` ("all" | "defi" | "general" | "market" | "nft" | "regulation"): News category (default all).
+- `limit` (integer): Number of articles to return, 1-50 (default 20). [≥ 1, ≤ 50]
+- `symbol` (string): Ticker to filter headlines by, e.g. BTC or SPA. [max length 15, pattern ^[A-Za-z0-9]+$]
+
+### get_sperax_protocol_stats
+
+Get Sperax protocol stats. Use this when the user asks about the Sperax protocol, USDs, SPA, veSPA, xSPA or Demeter farms. Returns USDs supply, peg and auto-yield APY, SPA price, staking, farms and buybacks, and optionally one wallet’s USDs earnings.
+
+Parameters:
+- `wallet` (string): Optional Arbitrum address (0x…) to include its USDs auto-yield earnings. [pattern ^0x[a-fA-F0-9]{40}$]
+
+## Skills
+
+- backtest-translation: Turn a strategy described in plain language into backtest conditions, run it, and explain the result against buy-and-hold. Use when the user describes an indicator rule ("buy when RSI is oversold", "golden cross", "Bollinger bounce") and wants to know how it would have done.
+- pre-trade-check: Run a full pre-trade check on one coin before the user acts on an idea elsewhere. Scans token safety, reads trend and derivatives positioning, sizes the position to their risk and checks liquidation against the stop. Use when the user says they are about to buy, long or short a coin, or asks whether a trade idea holds up.
+- setup: Set up Sperax Trading Desk for a new user by collecting their account size, default risk per trade, usual leverage and coins they trade, then running a first positioning check. Use right after installation or when the user asks how to get started.
+- stress-test: Stress test the user's crypto holdings against recorded crises and explain the downside in dollars. Works from a list of holdings or a public wallet address. Use when the user asks how bad a crash could get for their portfolio, what their worst case is, or whether they are too concentrated.
+
+## What it will not do
+
+- No trade execution and no trade links. Swap, perp, order and action link builders are not exposed. Quote comparisons carry no DEX links or transaction data.
+- No account access. It never connects to an exchange account, never asks for keys or seed phrases and needs no sign-in.
+- No custody and no signing. It cannot hold funds, build transactions or sign anything.
+- No prediction markets or social feeds. Prediction markets, third-party social posts and internal service status are not exposed. Upstream errors and internal timestamps are removed from responses.
+- No financial advice. Results are educational analysis. Market data is public and can be delayed. Backtests use daily candles, and past performance does not predict future results.
+
+## FAQ
+
+### What is Sperax Trading Desk?
+
+Sperax Trading Desk gives crypto traders read-only analysis tools that check an idea against real numbers before they act on it anywhere else. It is live in the ChatGPT plugin directory and works in any MCP client.
+
+### Can it place trades or move my funds?
+
+No. Every tool is read-only. It does not connect to exchange accounts, place orders, build transactions or sign anything, and it never asks for keys or seed phrases.
+
+### Do I need an account or an API key?
+
+No. The plugin and the MCP endpoint need no sign-in. Each IP may send 120 requests per minute.
+
+### What does it cost?
+
+Nothing. The plugin and the endpoint are free to use.
+
+### Where does the data come from?
+
+Public market sources, including OKX and Hyperliquid for derivatives, CoinGecko for prices, LI.FI, KyberSwap and Jupiter for swap quotes, Yahoo Finance and Finnhub for traditional markets, and on-chain data for token scans and wallet reviews. Responses are cached for 60 seconds to 15 minutes.
+
+### Can I use it outside ChatGPT?
+
+Yes. Point any MCP client that supports remote streamable-HTTP servers at https://chat.sperax.io/webapi/mcp/trading-copilot. Setup for Claude, Cursor, VS Code, Windsurf, Gemini CLI and Codex is above.
+
+### Is it financial advice?
+
+No. Results are educational analysis built from public data. Backtests use daily candles, and past performance does not predict future results.
+
+### Who builds it?
+
+Sperax, the team behind USDs and SperaxOS. Sperax has been building since 2019, has raised $17M and is in a strategic partnership with Microsoft.
+
+## Publisher
+
+Sperax (https://www.sperax.io). X: https://x.com/SperaxUSD. Telegram: https://t.me/SperaxUSD. GitHub: https://github.com/Sperax. Support: https://chat.sperax.io/support. Privacy: https://chat.sperax.io/privacy. Terms: https://chat.sperax.io/terms.
+
+Generated 2026-11-20 from the live server.

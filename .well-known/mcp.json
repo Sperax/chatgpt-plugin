@@ -1,0 +1,14 @@
+{
+  "servers": [
+    {
+      "name": "io.github.nirholas/sperax-trading-desk",
+      "title": "Sperax Trading Desk",
+      "description": "Read-only crypto trade analysis: positioning, sizing, backtests, token scans and 35 market feeds",
+      "transport": "streamable-http",
+      "url": "https://chat.sperax.io/webapi/mcp/trading-copilot",
+      "authentication": "none",
+      "serverCard": "https://sperax-trading-desk.pages.dev/.well-known/mcp/server-card.json",
+      "documentation": "https://sperax-trading-desk.pages.dev/llms-full.txt"
+    }
+  ]
+}

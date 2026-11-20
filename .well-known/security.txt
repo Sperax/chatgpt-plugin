@@ -1,0 +1,6 @@
+Contact: mailto:security@sperax.io
+Contact: https://github.com/Sperax/chatgpt-plugin/security/advisories/new
+Expires: 2027-11-20T00:33:32Z
+Preferred-Languages: en
+Policy: https://github.com/Sperax/chatgpt-plugin/security/policy
+Canonical: https://sperax-trading-desk.pages.dev/.well-known/security.txt

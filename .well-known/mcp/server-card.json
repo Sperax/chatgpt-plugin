@@ -1,0 +1,1401 @@
+{
+  "name": "io.github.nirholas/sperax-trading-desk",
+  "title": "Sperax Trading Desk",
+  "description": "Read-only crypto trade analysis: positioning, sizing, backtests, token scans and 35 market feeds",
+  "version": "2.0.0",
+  "serverInfo": {
+    "name": "sperax-trading-copilot",
+    "title": "Sperax Trading Desk",
+    "version": "2.1.23"
+  },
+  "protocolVersion": "2025-06-18",
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://chat.sperax.io/webapi/mcp/trading-copilot"
+  },
+  "authentication": {
+    "required": false,
+    "schemes": []
+  },
+  "capabilities": {
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
+    },
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "instructions": "Sperax Trading Desk tools are read-only. They return crypto market data and analysis and cannot place orders, sign transactions or move funds. For a trade plan on a coin, call analyze_coin first and pass its planSeed to build_trade_plan. Results are educational analysis, not financial advice, and backtest or stress-test results describe past data, not future performance.",
+  "publisher": {
+    "name": "Sperax",
+    "url": "https://www.sperax.io",
+    "contact": "https://chat.sperax.io/support"
+  },
+  "websiteUrl": "https://sperax-trading-desk.pages.dev/",
+  "documentationUrl": "https://sperax-trading-desk.pages.dev/tools",
+  "repositoryUrl": "https://github.com/Sperax/chatgpt-plugin",
+  "iconUrl": "https://sperax-trading-desk.pages.dev/icon-512.png",
+  "distribution": {
+    "chatgpt": "https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c",
+    "mcpRegistry": "https://sperax-trading-desk.pages.dev/server.json"
+  },
+  "rateLimit": {
+    "requests": 120,
+    "windowSeconds": 60,
+    "scope": "ip"
+  },
+  "tools": [
+    {
+      "name": "get_derivatives_positioning",
+      "title": "Get derivatives positioning",
+      "description": "Use this when the user asks about leverage, funding, open interest, crowding or squeeze risk for a crypto perpetual. Returns OKX and Hyperliquid funding (8h and annualized), open interest and its 24h change, global and top-trader long/short ratios, and a crowding, open-interest-regime and squeeze-risk read. Only covers tickers listed as USDT perpetuals on OKX or as perpetuals on Hyperliquid; it does not cover spot-only tokens, options or other venues.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get derivatives positioning"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "symbol": {
+            "description": "Ticker symbol such as BTC, ETH or SOL (letters and digits only).",
+            "maxLength": 15,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "build_trade_plan",
+      "title": "Build trade plan",
+      "description": "Use this when the user has a trade idea with an entry and a stop and needs a position size, or asks how much to buy, what leverage is safe, or whether a setup is worth taking. Returns the size that loses exactly riskPct of the account at the stop with fees included, notional and margin, the R-multiple and net P&L of each target, the breakeven win rate, expectancy and half-Kelly when winProbability is given, and whether leverage would liquidate the position before the stop. It is arithmetic on the numbers supplied: it does not fetch prices, judge the setup or place orders.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Build trade plan"
+      },
+      "inputSchema": {
+        "properties": {
+          "accountSize": {
+            "description": "Account equity in USD.",
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          "entry": {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          "feePct": {
+            "default": 0.05,
+            "description": "Taker fee per side in percent (0.05 = 0.05%).",
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "leverage": {
+            "default": 1,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "number"
+          },
+          "maintenanceMarginPct": {
+            "default": 0.5,
+            "description": "Venue maintenance margin in percent.",
+            "maximum": 10,
+            "minimum": 0,
+            "type": "number"
+          },
+          "riskPct": {
+            "default": 1,
+            "description": "Percent of the account lost if the stop is hit.",
+            "exclusiveMinimum": 0,
+            "maximum": 100,
+            "type": "number"
+          },
+          "side": {
+            "enum": [
+              "long",
+              "short"
+            ],
+            "type": "string"
+          },
+          "stop": {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          "targets": {
+            "description": "Up to 5 take-profit levels. Give allocationPct on all (summing to 100) or none (split evenly).",
+            "items": {
+              "properties": {
+                "allocationPct": {
+                  "exclusiveMinimum": 0,
+                  "maximum": 100,
+                  "type": "number"
+                },
+                "price": {
+                  "exclusiveMinimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "price"
+              ],
+              "type": "object"
+            },
+            "maxItems": 5,
+            "type": "array"
+          },
+          "winProbability": {
+            "description": "Estimated chance of reaching the targets, between 0 and 1 (exclusive).",
+            "exclusiveMaximum": 1,
+            "exclusiveMinimum": 0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "accountSize",
+          "entry",
+          "side",
+          "stop"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "backtest_signal_strategy",
+      "title": "Backtest signal strategy",
+      "description": "Use this when the user proposes a rule-based strategy (RSI, moving-average, MACD or Bollinger conditions) and wants to know how it would have performed. Simulates the strategy on 1-3 coins over 30-365 days of daily prices with fees, slippage and gas, and returns total and annualized return, max drawdown, Sharpe, win rate, profit factor, recent trades, a sampled equity curve and buy-and-hold and BTC benchmarks. Daily candles only: it cannot test intraday rules, order-book effects or leverage, and past performance does not predict future results.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Backtest signal strategy"
+      },
+      "inputSchema": {
+        "properties": {
+          "coins": {
+            "description": "CoinGecko coin IDs, lowercase and hyphenated: bitcoin, ethereum, solana, avalanche-2.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array"
+          },
+          "costs": {
+            "description": "Execution costs as fractions (0.003 = 0.3%). Defaults: fee 0.003, slippage 0.001, gas 2 USD per trade.",
+            "properties": {
+              "dexFeePct": {
+                "maximum": 0.05,
+                "minimum": 0,
+                "type": "number"
+              },
+              "gasCostUsd": {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "number"
+              },
+              "slippagePct": {
+                "maximum": 0.05,
+                "minimum": 0,
+                "type": "number"
+              }
+            },
+            "type": "object"
+          },
+          "days": {
+            "default": 180,
+            "maximum": 365,
+            "minimum": 30,
+            "type": "integer"
+          },
+          "initialCapital": {
+            "default": 10000,
+            "maximum": 100000000,
+            "minimum": 100,
+            "type": "number"
+          },
+          "rebalanceFrequency": {
+            "default": "weekly",
+            "description": "Cadence for dca and rebalance strategies.",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ],
+            "type": "string"
+          },
+          "strategy": {
+            "description": "Signal spec. Entry fires when all entryConditions hold, exit when any exitCondition holds. Example RSI dip-buy: indicators [{id:\"RSI_14\",type:\"RSI\",params:[14]}], entry [{indicator:\"RSI\",operator:\"<\",params:[14],value:30}], exit [{indicator:\"RSI\",operator:\">\",params:[14],value:70}].",
+            "properties": {
+              "entryConditions": {
+                "items": {
+                  "properties": {
+                    "indicator": {
+                      "description": "Series to test. SMA/EMA/RSI/MACD/BB_* need a matching entry in indicators with the same params.",
+                      "enum": [
+                        "price",
+                        "SMA",
+                        "EMA",
+                        "RSI",
+                        "MACD",
+                        "BB_upper",
+                        "BB_lower",
+                        "BB_middle"
+                      ],
+                      "type": "string"
+                    },
+                    "operator": {
+                      "description": ">, <, >=, <= compare the series to value. crossAbove/crossBelow fire when price crosses the indicator (value is ignored).",
+                      "enum": [
+                        ">",
+                        "<",
+                        ">=",
+                        "<=",
+                        "crossAbove",
+                        "crossBelow"
+                      ],
+                      "type": "string"
+                    },
+                    "params": {
+                      "description": "Indicator params, identical to the indicator entry (e.g. [14] for RSI 14, [20,2] for Bollinger 20/2).",
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "value": {
+                      "description": "Threshold for comparison operators; use 0 for crosses.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "indicator",
+                    "operator",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "exitConditions": {
+                "items": {
+                  "properties": {
+                    "indicator": {
+                      "description": "Series to test. SMA/EMA/RSI/MACD/BB_* need a matching entry in indicators with the same params.",
+                      "enum": [
+                        "price",
+                        "SMA",
+                        "EMA",
+                        "RSI",
+                        "MACD",
+                        "BB_upper",
+                        "BB_lower",
+                        "BB_middle"
+                      ],
+                      "type": "string"
+                    },
+                    "operator": {
+                      "description": ">, <, >=, <= compare the series to value. crossAbove/crossBelow fire when price crosses the indicator (value is ignored).",
+                      "enum": [
+                        ">",
+                        "<",
+                        ">=",
+                        "<=",
+                        "crossAbove",
+                        "crossBelow"
+                      ],
+                      "type": "string"
+                    },
+                    "params": {
+                      "description": "Indicator params, identical to the indicator entry (e.g. [14] for RSI 14, [20,2] for Bollinger 20/2).",
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "value": {
+                      "description": "Threshold for comparison operators; use 0 for crosses.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "indicator",
+                    "operator",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "indicators": {
+                "items": {
+                  "properties": {
+                    "id": {
+                      "description": "TYPE_params joined by underscores: SMA_50, EMA_20, RSI_14, MACD_12_26_9, and BB_20_2 for BollingerBands.",
+                      "type": "string"
+                    },
+                    "params": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "type": {
+                      "enum": [
+                        "SMA",
+                        "EMA",
+                        "RSI",
+                        "MACD",
+                        "BollingerBands"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "params",
+                    "type"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "positionSizing": {
+                "enum": [
+                  "equal",
+                  "volatility-weighted",
+                  "momentum-weighted"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "dca",
+                  "momentum",
+                  "rebalance",
+                  "meanReversion",
+                  "trendFollowing",
+                  "custom"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "entryConditions",
+              "exitConditions",
+              "indicators",
+              "positionSizing",
+              "type"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "coins",
+          "strategy"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scan_token",
+      "title": "Scan token safety",
+      "description": "Use this when the user asks whether a token is safe, or mentions a small cap, new launch or unfamiliar contract. Works by symbol or contract on any EVM chain or Solana and checks honeypot, buy and sell tax, mint and owner powers, holder concentration, liquidity and pair age, returning a safe, caution or danger verdict with flags.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Scan token safety"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Token symbol or contract address."
+          },
+          "chain": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "Chain of the token, such as ethereum, base, bsc or solana. Inferred when omitted."
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "compare_swap_quotes",
+      "title": "Compare swap quotes",
+      "description": "Use this when the user wants to compare swap rates for a token pair across DEX aggregators. Fetches live quotes from LI.FI, KyberSwap and Jupiter for any token on any chain and ranks them by output, with USD value, price impact, gas and the gap to the top quote. Give exactly one of amountUsd or sellAmount. Read-only: returns quotes, not transactions or links.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Compare swap quotes"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "buyToken": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Token to buy: symbol (SPA, ETH, BONK) or contract address."
+          },
+          "chain": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "Chain of buyToken, such as arbitrum, base or solana. Inferred when omitted."
+          },
+          "amountUsd": {
+            "maximum": 100000,
+            "minimum": 1,
+            "type": "number",
+            "description": "USD value to spend (1-100000). Give this or sellAmount."
+          },
+          "sellAmount": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "description": "Amount of sellToken in token units. Give this or amountUsd."
+          },
+          "sellToken": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Token to pay with. Defaults to USDC on the sell chain."
+          },
+          "sellChain": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "Chain sellToken is paid from when it differs from the buy chain."
+          },
+          "slippagePct": {
+            "default": 0.5,
+            "maximum": 5,
+            "minimum": 0.05,
+            "type": "number",
+            "description": "Maximum slippage in percent (0.5 = 0.5%)."
+          }
+        },
+        "required": [
+          "buyToken"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "review_wallet",
+      "title": "Review wallet",
+      "description": "Use this when the user shares a wallet address or asks whether their wallet or portfolio is in good shape. Reviews an EVM or Solana wallet: holdings and concentration, risky token approvals with revoke links, safety scans of held tokens and crisis-scenario drawdowns, ranked into findings with a healthy, attention or at_risk verdict. Read-only; it never touches funds.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Review wallet"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "maxLength": 64,
+            "type": "string",
+            "description": "Wallet address: 0x EVM address or Solana base58 address."
+          },
+          "includeStress": {
+            "default": true,
+            "type": "boolean",
+            "description": "Include the crisis stress test of the holdings."
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "stress_test_portfolio",
+      "title": "Stress test portfolio",
+      "description": "Use this when the user asks how bad a portfolio could get, wants a crash or crisis test, or asks about portfolio risk. Replays the holdings through real crypto crises (2025 tariff shock, yen carry unwind, SVB and USDC depeg, FTX, LUNA, May 2021 deleveraging, COVID crash) and returns drawdown, dollar loss and top losers per scenario, plus optional VaR, CVaR and risk contribution.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Stress test portfolio"
+      },
+      "inputSchema": {
+        "properties": {
+          "holdings": {
+            "description": "Positions by ticker and USD value, e.g. [{symbol:\"BTC\",valueUsd:5000}].",
+            "items": {
+              "properties": {
+                "symbol": {
+                  "maxLength": 32,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "valueUsd": {
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "symbol",
+                "valueUsd"
+              ],
+              "type": "object"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "type": "array"
+          },
+          "includeRisk": {
+            "description": "Add VaR, CVaR, volatility and per-asset risk contribution.",
+            "type": "boolean"
+          },
+          "scenarioIds": {
+            "description": "Limit to these scenarios. Omit for all.",
+            "items": {
+              "enum": [
+                "tariff-shock-2025",
+                "yen-carry-unwind",
+                "svb-usdc-depeg",
+                "ftx-collapse",
+                "luna-collapse",
+                "may-2021-deleveraging",
+                "covid-crash"
+              ],
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "holdings"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "analyze_coin",
+      "title": "Analyze coin",
+      "description": "Use this when the user asks what a coin's chart looks like, whether it is bullish or bearish, or where to enter, stop or take profit. Returns EMA 20/50/200 trend, RSI, MACD, ATR, swing support and resistance, volume and perp positioning folded into a verdict with reasons and a plan seed (entry, ATR stop, targets) to pass to build_trade_plan. Covers coins with OKX USDT or Hyperliquid markets; it is one technical input, not a signal or advice.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Analyze coin"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "symbol": {
+            "maxLength": 15,
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9]+$",
+            "description": "Ticker symbol, e.g. BTC, ETH, SOL."
+          },
+          "interval": {
+            "default": "1d",
+            "enum": [
+              "1d",
+              "4h"
+            ],
+            "type": "string",
+            "description": "Candle interval."
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_fear_greed_index",
+      "title": "Get Fear & Greed Index",
+      "description": "Use this when the user asks about the Crypto Fear & Greed Index or overall market mood. Returns the current 0-100 index with its label and daily history.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get Fear & Greed Index"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "description": "Number of days of history to return, 1-30 (default 7).",
+            "maximum": 30,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_regime",
+      "title": "Get market regime",
+      "description": "Use this when the user asks whether the broad crypto market is risk-on or risk-off. Returns seven macro signals (liquidity, ETF flows, trend, hashrate, mining cost, sentiment) with a composite regime read, plus Fear & Greed and global market cap.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get market regime"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_macro_dashboard",
+      "title": "Get macro dashboard",
+      "description": "Use this when the user asks how macro conditions affect crypto. Returns the dollar index, Treasury yields, equity indices, gold and oil with their correlation to crypto.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get macro dashboard"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_traditional_market_chart",
+      "title": "Get traditional market chart",
+      "description": "Use this when the user asks about the price history of a stock index, ETF, commodity or volatility index such as SPY, ^VIX or gold. Returns three months of daily prices from Yahoo Finance.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get traditional market chart"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "symbol": {
+            "description": "Yahoo Finance symbol, e.g. SPY, QQQ, ^VIX, DX-Y.NYB or GC=F.",
+            "maxLength": 20,
+            "pattern": "^[A-Za-z0-9^=.-]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_crypto_stock_quotes",
+      "title": "Get crypto stock quotes",
+      "description": "Use this when the user asks about crypto-related stocks such as Coinbase, MicroStrategy, Robinhood or the IBIT ETF. Returns real-time quotes with daily change from Finnhub.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get crypto stock quotes"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "symbols": {
+            "description": "Comma-separated stock tickers (default COIN,MSTR,HOOD,IBIT).",
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9., -]+$",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_intelligence",
+      "title": "Get market intelligence",
+      "description": "Use this when the user asks which narratives or sectors are moving in crypto. Returns a digest of narratives, sector rotation and notable moves.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get market intelligence"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_sentiment",
+      "title": "Get market sentiment",
+      "description": "Use this when the user asks about sentiment toward Bitcoin, Ethereum or other major coins. Returns a sentiment read per coin aggregated from news and social sources.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get market sentiment"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_global_market_stats",
+      "title": "Get global market stats",
+      "description": "Use this when the user asks about total crypto market cap, trading volume or Bitcoin and Ethereum dominance. Returns global market totals with 24h change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get global market stats"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_top_coins",
+      "title": "Get top coins",
+      "description": "Use this when the user asks for the largest coins, a market overview or the top movers by market cap or volume. Returns ranked coins with price, market cap, volume and 1h, 24h and 7d change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get top coins"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Number of coins to return, 1-250 (default 50).",
+            "maximum": 250,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "sort": {
+            "description": "Ranking order: market_cap_desc (default) or volume_desc.",
+            "enum": [
+              "market_cap_desc",
+              "volume_desc"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_coins",
+      "title": "Get trending coins",
+      "description": "Use this when the user asks what coins are trending or getting attention right now. Returns trending coins on CoinGecko and trending DEX pairs.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get trending coins"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_whale_alerts",
+      "title": "Get whale alerts",
+      "description": "Use this when the user asks about whale activity or large crypto transfers. Returns recent large on-chain transfers and exchange deposits and withdrawals.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get whale alerts"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_exchange_flows",
+      "title": "Get exchange flows",
+      "description": "Use this when the user asks whether Bitcoin or Ether is flowing into or out of exchanges. Returns exchange net flows for BTC and ETH.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get exchange flows"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tracked_wallet_activity",
+      "title": "Get tracked wallet activity",
+      "description": "Use this when the user wants to follow the recent activity of several wallet addresses at once. Returns recent transactions and holdings for up to 10 wallets on one chain. For a full review of a single wallet use review_wallet.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get tracked wallet activity"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "chain": {
+            "description": "Chain of the wallets, e.g. ethereum, base or arbitrum (default ethereum).",
+            "maxLength": 32,
+            "pattern": "^[A-Za-z0-9-]+$",
+            "type": "string"
+          },
+          "wallets": {
+            "description": "Comma-separated wallet addresses, up to 10.",
+            "maxLength": 500,
+            "pattern": "^[A-Za-z0-9, ]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "wallets"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_gas_prices",
+      "title": "Get gas prices",
+      "description": "Use this when the user asks about gas fees or transaction costs on Ethereum or its layer 2 networks. Returns current gas prices per network.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get gas prices"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_bitcoin_network_stats",
+      "title": "Get Bitcoin network stats",
+      "description": "Use this when the user asks about the Bitcoin network: mempool fees, the latest block, hashrate or the next difficulty adjustment. Returns those network stats with the BTC price.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get Bitcoin network stats"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_new_dex_listings",
+      "title": "Get new DEX listings",
+      "description": "Use this when the user asks about newly launched tokens or new DEX pairs. Returns recent DEX listings with liquidity and price momentum. New listings are high risk; check any of them with scan_token.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get new DEX listings"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "chain": {
+            "description": "Chain slug, e.g. solana, base, ethereum or bsc. Omit for all chains.",
+            "maxLength": 32,
+            "pattern": "^[A-Za-z0-9-]+$",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Number of listings to return, 1-100 (default 25).",
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_funding_rates",
+      "title": "Get funding rates",
+      "description": "Use this when the user asks how funding rates compare across major coins and exchanges. Returns perpetual funding rates per coin and exchange. For one coin in depth use get_derivatives_positioning.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get funding rates"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_open_interest",
+      "title": "Get open interest",
+      "description": "Use this when the user asks about open interest across the crypto futures market. Returns open interest by coin and exchange with 24h change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get open interest"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_liquidations",
+      "title": "Get liquidations",
+      "description": "Use this when the user asks about recent liquidations or a liquidation cascade. Returns recent long and short liquidations by coin and exchange.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get liquidations"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_long_short_ratios",
+      "title": "Get long/short ratios",
+      "description": "Use this when the user asks whether traders are mostly long or short across the market. Returns long/short account ratios per coin and exchange.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get long/short ratios"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_options_overview",
+      "title": "Get options overview",
+      "description": "Use this when the user asks about Bitcoin or Ether options. Returns options open interest, put/call ratio, max pain and implied volatility.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get options overview"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_etf_flows",
+      "title": "Get ETF flows",
+      "description": "Use this when the user asks about spot Bitcoin or Ether ETF flows. Returns daily net flows and holdings by ETF issuer.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get ETF flows"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_dex_volumes",
+      "title": "Get DEX volumes",
+      "description": "Use this when the user asks about decentralized exchange trading volume. Returns DEX volume by protocol and chain with 24h and 7d change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get DEX volumes"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_defi_overview",
+      "title": "Get DeFi overview",
+      "description": "Use this when the user asks about the overall size of DeFi. Returns total value locked across DeFi with dominance and 24h change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get DeFi overview"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_chain_tvl",
+      "title": "Get TVL by chain",
+      "description": "Use this when the user asks which blockchains hold the most value or where capital is moving between chains. Returns total value locked per chain with change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get TVL by chain"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_top_defi_protocols",
+      "title": "Get top DeFi protocols",
+      "description": "Use this when the user asks for the largest DeFi protocols. Returns protocols ranked by total value locked with category, chains and change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get top DeFi protocols"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Number of protocols to return, 1-100 (default 25).",
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_protocol_revenue",
+      "title": "Get protocol revenue",
+      "description": "Use this when the user asks which DeFi protocols earn the most fees or revenue. Returns protocol fee and revenue rankings.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get protocol revenue"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_defi_yields",
+      "title": "Get DeFi yields",
+      "description": "Use this when the user asks about DeFi yields or APY on lending, liquidity or vault pools. Returns pools ranked by APY with TVL, chain and project, above a TVL floor. Yields are variable and carry smart-contract risk.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get DeFi yields"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Number of pools to return, 1-100 (default 25).",
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_stablecoin_stats",
+      "title": "Get stablecoin stats",
+      "description": "Use this when the user asks about stablecoin supply, market share or peg stability. Returns stablecoin supply, dominance, chain distribution and peg health.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get stablecoin stats"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_bridge_flows",
+      "title": "Get bridge flows",
+      "description": "Use this when the user asks about cross-chain bridge activity or which chains are gaining capital. Returns bridge volumes and net flows per chain.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get bridge flows"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_token_unlocks",
+      "title": "Get token unlocks",
+      "description": "Use this when the user asks about upcoming token unlocks or vesting releases. Returns unlocks scheduled in the next 30 days, ranked by value.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get token unlocks"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_governance_proposals",
+      "title": "Get governance proposals",
+      "description": "Use this when the user asks about DAO votes or governance proposals. Returns active governance proposals across major protocols.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get governance proposals"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Number of proposals to return, 1-50 (default 20).",
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_onchain_ai_agents",
+      "title": "Get on-chain AI agents",
+      "description": "Use this when the user asks about on-chain AI agents registered under ERC-8004, the Ethereum standard for agent identity and reputation. Returns registered agents with their identity and reputation data.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get on-chain AI agents"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "chain": {
+            "description": "Chain name, e.g. base or ethereum. Omit for all supported chains.",
+            "maxLength": 32,
+            "pattern": "^[A-Za-z0-9-]+$",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Number of agents to return, 1-50 (default 20).",
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_crypto_news",
+      "title": "Get crypto news",
+      "description": "Use this when the user asks for crypto news or headlines, optionally about one coin or category. Returns recent articles with source, time and summary.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get crypto news"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "description": "News category (default all).",
+            "enum": [
+              "all",
+              "defi",
+              "general",
+              "market",
+              "nft",
+              "regulation"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "description": "Number of articles to return, 1-50 (default 20).",
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "symbol": {
+            "description": "Ticker to filter headlines by, e.g. BTC or SPA.",
+            "maxLength": 15,
+            "pattern": "^[A-Za-z0-9]+$",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_sperax_protocol_stats",
+      "title": "Get Sperax protocol stats",
+      "description": "Use this when the user asks about the Sperax protocol, USDs, SPA, veSPA, xSPA or Demeter farms. Returns USDs supply, peg and auto-yield APY, SPA price, staking, farms and buybacks, and optionally one wallet’s USDs earnings.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get Sperax protocol stats"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "wallet": {
+            "description": "Optional Arbitrum address (0x…) to include its USDs auto-yield earnings.",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      }
+    }
+  ]
+}

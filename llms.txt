@@ -1,0 +1,76 @@
+# Sperax Trading Desk
+
+> Sperax Trading Desk gives crypto traders read-only analysis tools that check an idea against real numbers before they act on it anywhere else. Free, read-only MCP server with 43 tools (8 analysis tools and 35 live market feeds), live in the ChatGPT plugin directory and usable from any MCP client. It cannot place orders, sign transactions or move funds.
+
+- MCP endpoint: https://chat.sperax.io/webapi/mcp/trading-copilot (streamable HTTP, JSON-RPC over POST, no auth, 120 requests per minute per IP)
+- ChatGPT listing: https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c
+- Publisher: Sperax (https://www.sperax.io)
+- Source: https://github.com/Sperax/chatgpt-plugin (Apache-2.0)
+
+## Docs
+
+- [Full reference for LLMs](https://sperax-trading-desk.pages.dev/llms-full.txt): every tool with its full description and parameters, install steps, limits and FAQ in one file
+- [Tool reference](https://sperax-trading-desk.pages.dev/tools): the same tools as a web page
+- [MCP server card](https://sperax-trading-desk.pages.dev/.well-known/mcp/server-card.json): server info, transport, capabilities and tool list as JSON
+- [MCP Registry entry](https://sperax-trading-desk.pages.dev/server.json): server.json for the official MCP Registry
+
+## Analysis tools
+
+- [get_derivatives_positioning](https://sperax-trading-desk.pages.dev/tools#get_derivatives_positioning): Returns OKX and Hyperliquid funding (8h and annualized), open interest and its 24h change, global and top-trader long/short ratios, and a crowding, open-interest-regime and squeeze-risk read.
+- [build_trade_plan](https://sperax-trading-desk.pages.dev/tools#build_trade_plan): Returns the size that loses exactly riskPct of the account at the stop with fees included, notional and margin, the R-multiple and net P&L of each target, the breakeven win rate, expectancy and half-Kelly when winProbability is given, and whether leverage would liquidate the position before the stop.
+- [backtest_signal_strategy](https://sperax-trading-desk.pages.dev/tools#backtest_signal_strategy): Simulates the strategy on 1-3 coins over 30-365 days of daily prices with fees, slippage and gas, and returns total and annualized return, max drawdown, Sharpe, win rate, profit factor, recent trades, a sampled equity curve and buy-and-hold and BTC benchmarks.
+- [scan_token](https://sperax-trading-desk.pages.dev/tools#scan_token): Works by symbol or contract on any EVM chain or Solana and checks honeypot, buy and sell tax, mint and owner powers, holder concentration, liquidity and pair age, returning a safe, caution or danger verdict with flags.
+- [compare_swap_quotes](https://sperax-trading-desk.pages.dev/tools#compare_swap_quotes): Fetches live quotes from LI.FI, KyberSwap and Jupiter for any token on any chain and ranks them by output, with USD value, price impact, gas and the gap to the top quote.
+- [review_wallet](https://sperax-trading-desk.pages.dev/tools#review_wallet): Reviews an EVM or Solana wallet: holdings and concentration, risky token approvals with revoke links, safety scans of held tokens and crisis-scenario drawdowns, ranked into findings with a healthy, attention or at_risk verdict.
+- [stress_test_portfolio](https://sperax-trading-desk.pages.dev/tools#stress_test_portfolio): Replays the holdings through real crypto crises (2025 tariff shock, yen carry unwind, SVB and USDC depeg, FTX, LUNA, May 2021 deleveraging, COVID crash) and returns drawdown, dollar loss and top losers per scenario, plus optional VaR, CVaR and risk contribution.
+- [analyze_coin](https://sperax-trading-desk.pages.dev/tools#analyze_coin): Returns EMA 20/50/200 trend, RSI, MACD, ATR, swing support and resistance, volume and perp positioning folded into a verdict with reasons and a plan seed (entry, ATR stop, targets) to pass to build_trade_plan.
+
+## Market feeds
+
+- [get_fear_greed_index](https://sperax-trading-desk.pages.dev/tools#get_fear_greed_index): Returns the current 0-100 index with its label and daily history.
+- [get_market_regime](https://sperax-trading-desk.pages.dev/tools#get_market_regime): Returns seven macro signals (liquidity, ETF flows, trend, hashrate, mining cost, sentiment) with a composite regime read, plus Fear & Greed and global market cap.
+- [get_macro_dashboard](https://sperax-trading-desk.pages.dev/tools#get_macro_dashboard): Returns the dollar index, Treasury yields, equity indices, gold and oil with their correlation to crypto.
+- [get_traditional_market_chart](https://sperax-trading-desk.pages.dev/tools#get_traditional_market_chart): Returns three months of daily prices from Yahoo Finance.
+- [get_crypto_stock_quotes](https://sperax-trading-desk.pages.dev/tools#get_crypto_stock_quotes): Returns real-time quotes with daily change from Finnhub.
+- [get_market_intelligence](https://sperax-trading-desk.pages.dev/tools#get_market_intelligence): Returns a digest of narratives, sector rotation and notable moves.
+- [get_market_sentiment](https://sperax-trading-desk.pages.dev/tools#get_market_sentiment): Returns a sentiment read per coin aggregated from news and social sources.
+- [get_global_market_stats](https://sperax-trading-desk.pages.dev/tools#get_global_market_stats): Returns global market totals with 24h change.
+- [get_top_coins](https://sperax-trading-desk.pages.dev/tools#get_top_coins): Returns ranked coins with price, market cap, volume and 1h, 24h and 7d change.
+- [get_trending_coins](https://sperax-trading-desk.pages.dev/tools#get_trending_coins): Returns trending coins on CoinGecko and trending DEX pairs.
+- [get_whale_alerts](https://sperax-trading-desk.pages.dev/tools#get_whale_alerts): Returns recent large on-chain transfers and exchange deposits and withdrawals.
+- [get_exchange_flows](https://sperax-trading-desk.pages.dev/tools#get_exchange_flows): Returns exchange net flows for BTC and ETH.
+- [get_tracked_wallet_activity](https://sperax-trading-desk.pages.dev/tools#get_tracked_wallet_activity): Returns recent transactions and holdings for up to 10 wallets on one chain.
+- [get_gas_prices](https://sperax-trading-desk.pages.dev/tools#get_gas_prices): Returns current gas prices per network.
+- [get_bitcoin_network_stats](https://sperax-trading-desk.pages.dev/tools#get_bitcoin_network_stats): Covers the Bitcoin network: mempool fees, the latest block, hashrate or the next difficulty adjustment.
+- [get_new_dex_listings](https://sperax-trading-desk.pages.dev/tools#get_new_dex_listings): Returns recent DEX listings with liquidity and price momentum.
+- [get_funding_rates](https://sperax-trading-desk.pages.dev/tools#get_funding_rates): Returns perpetual funding rates per coin and exchange.
+- [get_open_interest](https://sperax-trading-desk.pages.dev/tools#get_open_interest): Returns open interest by coin and exchange with 24h change.
+- [get_liquidations](https://sperax-trading-desk.pages.dev/tools#get_liquidations): Returns recent long and short liquidations by coin and exchange.
+- [get_long_short_ratios](https://sperax-trading-desk.pages.dev/tools#get_long_short_ratios): Returns long/short account ratios per coin and exchange.
+- [get_options_overview](https://sperax-trading-desk.pages.dev/tools#get_options_overview): Returns options open interest, put/call ratio, max pain and implied volatility.
+- [get_etf_flows](https://sperax-trading-desk.pages.dev/tools#get_etf_flows): Returns daily net flows and holdings by ETF issuer.
+- [get_dex_volumes](https://sperax-trading-desk.pages.dev/tools#get_dex_volumes): Returns DEX volume by protocol and chain with 24h and 7d change.
+- [get_defi_overview](https://sperax-trading-desk.pages.dev/tools#get_defi_overview): Returns total value locked across DeFi with dominance and 24h change.
+- [get_chain_tvl](https://sperax-trading-desk.pages.dev/tools#get_chain_tvl): Returns total value locked per chain with change.
+- [get_top_defi_protocols](https://sperax-trading-desk.pages.dev/tools#get_top_defi_protocols): Returns protocols ranked by total value locked with category, chains and change.
+- [get_protocol_revenue](https://sperax-trading-desk.pages.dev/tools#get_protocol_revenue): Returns protocol fee and revenue rankings.
+- [get_defi_yields](https://sperax-trading-desk.pages.dev/tools#get_defi_yields): Returns pools ranked by APY with TVL, chain and project, above a TVL floor.
+- [get_stablecoin_stats](https://sperax-trading-desk.pages.dev/tools#get_stablecoin_stats): Returns stablecoin supply, dominance, chain distribution and peg health.
+- [get_bridge_flows](https://sperax-trading-desk.pages.dev/tools#get_bridge_flows): Returns bridge volumes and net flows per chain.
+- [get_token_unlocks](https://sperax-trading-desk.pages.dev/tools#get_token_unlocks): Returns unlocks scheduled in the next 30 days, ranked by value.
+- [get_governance_proposals](https://sperax-trading-desk.pages.dev/tools#get_governance_proposals): Returns active governance proposals across major protocols.
+- [get_onchain_ai_agents](https://sperax-trading-desk.pages.dev/tools#get_onchain_ai_agents): Returns registered agents with their identity and reputation data.
+- [get_crypto_news](https://sperax-trading-desk.pages.dev/tools#get_crypto_news): Returns recent articles with source, time and summary.
+- [get_sperax_protocol_stats](https://sperax-trading-desk.pages.dev/tools#get_sperax_protocol_stats): Returns USDs supply, peg and auto-yield APY, SPA price, staking, farms and buybacks, and optionally one wallet’s USDs earnings.
+
+## Install
+
+- ChatGPT: add Sperax Trading Desk from https://chatgpt.com/plugins/plugin_asdk_app_6aea0b5be6608191a02eeebc810e235c
+- Claude Code: `claude mcp add --transport http sperax-trading-desk https://chat.sperax.io/webapi/mcp/trading-copilot`
+- Cursor, VS Code, Windsurf, Gemini CLI, Codex, Claude Desktop: [setup snippets](https://sperax-trading-desk.pages.dev/#install)
+
+## Optional
+
+- [Skills](https://github.com/Sperax/chatgpt-plugin/tree/main/sperax-trading-copilot/skills): backtest-translation, pre-trade-check, setup, stress-test
+- [Plugin manifest](https://github.com/Sperax/chatgpt-plugin/blob/main/sperax-trading-copilot/plugin.json)
+- [Launch video](https://sperax-trading-desk.pages.dev/media/sperax-trading-desk-chatgpt.mp4)
